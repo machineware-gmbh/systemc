@@ -33,6 +33,8 @@
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(WIN64)  && !defined(SC_USE_PTHREADS)
 
+#include <sys/mman.h> // for munmap
+
 #include "sysc/kernel/sc_cor.h"
 #include "sysc/packages/qt/qt.h"
 
@@ -58,8 +60,10 @@ public:
 	{}
 
     // destructor
-    virtual ~sc_cor_qt()
-        { delete[] (char*) m_stack; }
+    virtual ~sc_cor_qt() {
+        if (m_stack)
+            munmap(m_stack, m_stack_size);
+    }
 
     // switch stack protection on/off
     virtual void stack_protect( bool enable );

@@ -157,6 +157,8 @@ sc_cor_pkg_qt::~sc_cor_pkg_qt()
 
 // create a new coroutine
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
 extern "C"
 void
 sc_cor_qt_wrapper( void* arg, void* cor, qt_userf_t* fn )
@@ -166,14 +168,18 @@ sc_cor_qt_wrapper( void* arg, void* cor, qt_userf_t* fn )
     (*(sc_cor_fn*) fn)( arg );
     // not reached
 }
+#pragma GCC diagnostic pop
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
 sc_cor*
 sc_cor_pkg_qt::create( std::size_t stack_size, sc_cor_fn* fn, void* arg )
 {
     sc_cor_qt* cor = new sc_cor_qt();
     cor->m_pkg = this;
     cor->m_stack_size = stack_size;
-    cor->m_stack = new char[cor->m_stack_size];
+    cor->m_stack = mmap(NULL, cor->m_stack_size, PROT_READ | PROT_WRITE,
+                        MAP_PRIVATE | MAP_ANON, -1, 0);
     void* sto = stack_align( cor->m_stack, QUICKTHREADS_STKALIGN,
                              &cor->m_stack_size );
     cor->m_sp = QUICKTHREADS_SP(sto, cor->m_stack_size - QUICKTHREADS_STKALIGN);
@@ -181,6 +187,7 @@ sc_cor_pkg_qt::create( std::size_t stack_size, sc_cor_fn* fn, void* arg )
 			           sc_cor_qt_wrapper );
     return cor;
 }
+#pragma GCC diagnostic pop
 
 
 // yield to the next coroutine

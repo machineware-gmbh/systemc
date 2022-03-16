@@ -201,6 +201,11 @@ sc_cor_pkg_qt::create( std::size_t stack_size, sc_cor_fn* fn, void* arg )
     cor->m_stack_size = stack_size;
     cor->m_stack = mmap(NULL, cor->m_stack_size, PROT_READ | PROT_WRITE,
                         MAP_PRIVATE | MAP_ANON, -1, 0);
+
+#ifdef HAVE_VALGRIND_H
+    cor->m_vgid = VALGRIND_STACK_REGISTER(cor->m_stack, (char*)cor->m_stack + cor->m_stack_size - 1);
+#endif
+
     void* sto = stack_align( cor->m_stack, QUICKTHREADS_STKALIGN,
                              &cor->m_stack_size );
     cor->m_sp = QUICKTHREADS_SP(sto, cor->m_stack_size - QUICKTHREADS_STKALIGN);

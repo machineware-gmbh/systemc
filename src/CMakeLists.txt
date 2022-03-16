@@ -476,7 +476,8 @@ target_compile_definitions (
   $<$<BOOL:${ENABLE_PTHREADS}>:SC_USE_PTHREADS>
   $<$<BOOL:${OVERRIDE_DEFAULT_STACK_SIZE}>:
     SC_OVERRIDE_DEFAULT_STACK_SIZE=${OVERRIDE_DEFAULT_STACK_SIZE}>
-  $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:_LIB>)
+  $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:_LIB>
+  $<$<BOOL:${HAVE_VALGRIND_H}>:HAVE_VALGRIND_H>)
 
 target_compile_options(
   systemc

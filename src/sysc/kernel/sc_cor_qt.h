@@ -35,6 +35,10 @@
 
 #include <sys/mman.h> // for munmap
 
+#ifdef HAVE_VALGRIND_H
+#include <valgrind/valgrind.h>
+#endif
+
 #include "sysc/kernel/sc_cor.h"
 #include "sysc/packages/qt/qt.h"
 
@@ -57,10 +61,16 @@ public:
     // constructor
     sc_cor_qt()
 	: m_stack_size( 0 ), m_stack( 0 ), m_sp( 0 ), m_pkg( 0 )
+#ifdef HAVE_VALGRIND_H
+    , m_vgid( 0 )
+#endif
 	{}
 
     // destructor
     virtual ~sc_cor_qt() {
+#ifdef HAVE_VALGRIND_H
+        VALGRIND_STACK_DEREGISTER(m_vgid);
+#endif
         if (m_stack)
             munmap(m_stack, m_stack_size);
     }
@@ -75,6 +85,10 @@ public:
     qt_t*          m_sp;          // stack pointer
 
     sc_cor_pkg_qt* m_pkg;         // the creating coroutine package
+
+#ifdef HAVE_VALGRIND_H
+    unsigned int   m_vgid;        // valgrind stack id
+#endif
 
 private:
 

@@ -625,6 +625,14 @@ endif ("${isSystemDir}" STREQUAL "-1")
 
 
 ###############################################################################
+# Look for valgrind
+###############################################################################
+find_path(VALGRIND_H NAMES valgrind.h PATH_SUFFIXES valgrind)
+if (EXISTS ${VALGRIND_H})
+    set(HAVE_VALGRIND_H TRUE)
+endif()
+
+###############################################################################
 # Configure status
 ###############################################################################
 
@@ -687,6 +695,9 @@ endif (ENABLE_PTHREADS)
 if (OVERRIDE_DEFAULT_STACK_SIZE GREATER 0)
   message ("Override default stack size ${OVERRIDE_DEFAULT_STACK_SIZE}")
 endif (OVERRIDE_DEFAULT_STACK_SIZE GREATER 0)
+if (HAVE_VALGRIND_H)
+  message (STATUS "Enable valgrind support")
+endif (HAVE_VALGRIND_H)
 message (STATUS "SystemC target arch ${SystemC_TARGET_ARCH}")
 message (STATUS "SystemC language version ${SystemCLanguage_VERSION}")
 message (STATUS "SystemC TLM version ${SystemCTLM_VERSION}")

@@ -651,7 +651,9 @@ struct SC_API scoped_flag
 private:
     scoped_flag& operator=(const scoped_flag&) /* = delete */;
 };
-inline void sc_process_b::semantics()
+
+inline __attribute__((no_sanitize("undefined")))
+void sc_process_b::semantics()
 {
 
     // within this function, the process has a stack associated

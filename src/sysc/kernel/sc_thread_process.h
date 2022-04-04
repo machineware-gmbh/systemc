@@ -437,7 +437,7 @@ void sc_thread_process::set_next_runnable(sc_thread_handle next_p)
     m_runnable_p = next_p;
 }
 
-inline
+inline __attribute__((no_sanitize("undefined")))
 sc_thread_handle sc_thread_process::next_runnable()
 {
     return (sc_thread_handle)m_runnable_p;

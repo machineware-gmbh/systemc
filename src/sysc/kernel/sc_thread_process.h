@@ -437,9 +437,10 @@ void sc_thread_process::set_next_runnable(sc_thread_handle next_p)
     m_runnable_p = next_p;
 }
 
-inline __attribute__((no_sanitize("undefined")))
+inline SC_HAS_UNDEFINED_BEHAVIOR
 sc_thread_handle sc_thread_process::next_runnable()
 {
+    // JHW: this cast triggers UBSAN if m_runnable_p is SC_NO_THREADS
     return (sc_thread_handle)m_runnable_p;
 }
 

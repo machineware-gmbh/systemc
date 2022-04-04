@@ -652,7 +652,7 @@ private:
     scoped_flag& operator=(const scoped_flag&) /* = delete */;
 };
 
-inline __attribute__((no_sanitize("undefined")))
+inline SC_HAS_UNDEFINED_BEHAVIOR
 void sc_process_b::semantics()
 {
 

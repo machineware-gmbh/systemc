@@ -581,6 +581,10 @@ elseif (INSTALL_TO_LIB_TARGET_ARCH_DIR)
 endif (INSTALL_TO_LIB_BUILD_TYPE_DIR)
 include (GNUInstallDirs)
 
+# JHW: enforce fixed include and library directory names for installation
+set (CMAKE_INSTALL_INCLUDEDIR "include")
+set (CMAKE_INSTALL_LIBDIR "lib")
+
 # Install symlink lib-<target-arch> to lib-${CMAKE_BUILD_TYPE}
 if (INSTALL_LIB_TARGET_ARCH_SYMLINK AND CMAKE_HOST_UNIX)
   install (CODE "
@@ -751,26 +755,26 @@ message (STATUS "SystemC TLM version ${SystemCTLM_VERSION}")
 # Subdirectories
 ###############################################################################
 
-add_subdirectory (docs)
+# add_subdirectory (docs)
 add_subdirectory (src)
-add_subdirectory (examples)
+# add_subdirectory (examples)
 
 
 ###############################################################################
 # Install README files
 ###############################################################################
 
-install (FILES AUTHORS
-               ChangeLog
-               INSTALL
-               cmake/INSTALL_USING_CMAKE
-               LICENSE
-               NEWS
-               NOTICE
-               README
-               RELEASENOTES
-         DESTINATION ${CMAKE_INSTALL_DOCDIR}
-         COMPONENT doc)
+# install (FILES AUTHORS
+#                ChangeLog
+#                INSTALL
+#                cmake/INSTALL_USING_CMAKE
+#                LICENSE
+#                NEWS
+#                NOTICE
+#                README
+#                RELEASENOTES
+#          DESTINATION ${CMAKE_INSTALL_DOCDIR}
+#          COMPONENT doc)
 
 
 ###############################################################################
@@ -779,45 +783,45 @@ install (FILES AUTHORS
 
 # Export the systemc library target for usage by other programs
 # ... to local build tree
-export (TARGETS systemc
-        NAMESPACE SystemC::
-        FILE SystemCLanguageTargets.cmake)
+# export (TARGETS systemc
+#         NAMESPACE SystemC::
+#         FILE SystemCLanguageTargets.cmake)
 # ... to installation tree
-install (EXPORT SystemCLanguageTargets
-         NAMESPACE SystemC::
-         DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
-         COMPONENT dev)
+# install (EXPORT SystemCLanguageTargets
+#          NAMESPACE SystemC::
+#          DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
+#          COMPONENT dev)
 
 # Register the SystemCLanguage and SystemCTLM packages for use from the
 # build tree. (This registers the build tree with the global CMake-registry.)
-export (PACKAGE SystemCLanguage)
-export (PACKAGE SystemCTLM)
+# export (PACKAGE SystemCLanguage)
+# export (PACKAGE SystemCTLM)
 
 # Create the <Package>Config.cmake and <Package>ConfigVersion files
-include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/SystemCLanguageConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfig.cmake
-  INSTALL_DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR})
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
-  VERSION ${SystemCLanguage_VERSION_MAJOR}.${SystemCLanguage_VERSION_MINOR}.${SystemCLanguage_VERSION_PATCH}.${SystemCLanguage_VERSION_RELEASE_DATE}
-  COMPATIBILITY AnyNewerVersion
-)
-configure_package_config_file(cmake/SystemCTLMConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfig.cmake
-  INSTALL_DESTINATION ${SystemCTLM_INSTALL_CMAKEDIR})
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
-  VERSION ${SystemCTLM_VERSION_MAJOR}.${SystemCTLM_VERSION_MINOR}.${SystemCTLM_VERSION_PATCH}.${SystemCTLM_VERSION_RELEASE_DATE}
-  COMPATIBILITY AnyNewerVersion
-)
+# include(CMakePackageConfigHelpers)
+# configure_package_config_file(cmake/SystemCLanguageConfig.cmake.in
+#   ${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfig.cmake
+#   INSTALL_DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR})
+# write_basic_package_version_file(
+#   "${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
+#   VERSION ${SystemCLanguage_VERSION_MAJOR}.${SystemCLanguage_VERSION_MINOR}.${SystemCLanguage_VERSION_PATCH}.${SystemCLanguage_VERSION_RELEASE_DATE}
+#   COMPATIBILITY AnyNewerVersion
+# )
+# configure_package_config_file(cmake/SystemCTLMConfig.cmake.in
+#  ${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfig.cmake
+#   INSTALL_DESTINATION ${SystemCTLM_INSTALL_CMAKEDIR})
+# write_basic_package_version_file(
+#   "${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
+#   VERSION ${SystemCTLM_VERSION_MAJOR}.${SystemCTLM_VERSION_MINOR}.${SystemCTLM_VERSION_PATCH}.${SystemCTLM_VERSION_RELEASE_DATE}
+#   COMPATIBILITY AnyNewerVersion
+# )
 
 # Install the <Package>Config.cmake and <Package>ConfigVersion.cmake
-install(FILES "${PROJECT_BINARY_DIR}/SystemCLanguageConfig.cmake"
-              "${PROJECT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
-        DESTINATION "${SystemCLanguage_INSTALL_CMAKEDIR}"
-        COMPONENT dev)
-install(FILES "${PROJECT_BINARY_DIR}/SystemCTLMConfig.cmake"
-              "${PROJECT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
-        DESTINATION "${SystemCTLM_INSTALL_CMAKEDIR}"
-        COMPONENT dev)
+# install(FILES "${PROJECT_BINARY_DIR}/SystemCLanguageConfig.cmake"
+#               "${PROJECT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
+#         DESTINATION "${SystemCLanguage_INSTALL_CMAKEDIR}"
+#         COMPONENT dev)
+# install(FILES "${PROJECT_BINARY_DIR}/SystemCTLMConfig.cmake"
+#               "${PROJECT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
+#         DESTINATION "${SystemCTLM_INSTALL_CMAKEDIR}"
+#         COMPONENT dev)

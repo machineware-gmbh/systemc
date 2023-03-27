@@ -211,6 +211,11 @@
 #define SC_HAS_UNDEFINED_BEHAVIOR
 #endif
 
+// ----------------------------------------------------------------------------
+// JHW: include inSCight header to make its tracing hook callbacks available
+// throughout the entire kernel
+#include "inscight/inscight.h"
+
 // $Log: sc_cmnhdr.h,v $
 // Revision 1.8  2011/08/26 20:46:09  acg
 //  Andy Goodrich: moved the modification log to the end of the file to

@@ -347,6 +347,11 @@ private:
     // disabled
     sc_event( const sc_event& );
     sc_event& operator = ( const sc_event& );
+
+#ifdef HAVE_INSCIGHT
+public:
+    const inscight::id id;
+#endif
 };
 
 // ----------------------------------------------------------------------------

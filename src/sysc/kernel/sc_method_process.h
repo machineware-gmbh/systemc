@@ -296,6 +296,8 @@ sc_method_handle sc_method_process::next_runnable()
 // +----------------------------------------------------------------------------
 inline bool sc_method_process::run_process()
 {
+    INSCIGHT_PROCESS_START(id());
+
     // Execute this object instance's semantics and catch any exceptions that
     // are generated:
 
@@ -314,10 +316,12 @@ inline bool sc_method_process::run_process()
         catch( ... ) {
             sc_report* err_p = sc_handle_exception();
             simcontext()->set_error( err_p );
+            INSCIGHT_PROCESS_YIELD(id());
             return false;
         }
     } while( restart );
 
+    INSCIGHT_PROCESS_YIELD(id());
     return true;
 }
 

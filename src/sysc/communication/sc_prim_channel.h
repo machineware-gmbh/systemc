@@ -375,7 +375,9 @@ inline
 void
 sc_prim_channel::perform_update()
 {
+    INSCIGHT_CHANNEL_UPDATE_START(id());
     update();
+    INSCIGHT_CHANNEL_UPDATE_COMPLETE(id());
     m_update_next_p = 0;
 }
 

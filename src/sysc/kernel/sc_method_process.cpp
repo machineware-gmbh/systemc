@@ -363,6 +363,8 @@ sc_method_process::sc_method_process( const char* name_p,
     {
         m_dont_init = false;
     }
+
+    INSCIGHT_PROCESS_CREATED(id(), name(), inscight::KIND_METHOD);
 }
 
 //------------------------------------------------------------------------------

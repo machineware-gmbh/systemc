@@ -155,6 +155,11 @@ private:
     std::string             m_name;          // name of this object.
     sc_object*              m_parent;        // parent for this object.
     sc_simcontext*          m_simc;          // simcontext ptr / empty indicator
+
+#ifdef HAVE_INSCIGHT
+public:
+    const inscight::id id;
+#endif
 };
 
 inline

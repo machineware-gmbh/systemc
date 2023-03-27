@@ -114,20 +114,26 @@ void sc_thread_cor_fn( void* arg )
     while( true ) {
 
         try {
+            INSCIGHT_PROCESS_START(thread_h->id());
             thread_h->semantics();
+            INSCIGHT_PROCESS_YIELD(thread_h->id());
         }
         catch( sc_user ) {
+            INSCIGHT_PROCESS_YIELD(thread_h->id());
             continue;
         }
         catch( sc_halt ) {
+            INSCIGHT_PROCESS_YIELD(thread_h->id());
             ::std::cout << "Terminating process "
                       << thread_h->name() << ::std::endl;
         }
         catch( const sc_unwind_exception& ex ) {
+            INSCIGHT_PROCESS_YIELD(thread_h->id());
 	    ex.clear();
             if ( ex.is_reset() ) continue;
         }
         catch( ... ) {
+            INSCIGHT_PROCESS_YIELD(thread_h->id());
             sc_report* err_p = sc_handle_exception();
             thread_h->simcontext()->set_error( err_p );
         }
@@ -462,6 +468,7 @@ sc_thread_process::sc_thread_process( const char* name_p, bool free_host,
         m_dont_init = false;
     }
 
+    INSCIGHT_PROCESS_CREATED(id(), name(), inscight::KIND_THREAD);
 }
 
 //------------------------------------------------------------------------------

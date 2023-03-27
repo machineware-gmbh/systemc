@@ -220,7 +220,9 @@ inline void sc_thread_process::suspend_me()
     if( m_cor_p != cor_p )
     {
         DEBUG_MSG( DEBUG_NAME , this, "suspending thread");
+        INSCIGHT_PROCESS_YIELD(id());
         simc_p->cor_pkg()->yield( cor_p );
+        INSCIGHT_PROCESS_START(id());
         DEBUG_MSG( DEBUG_NAME , this, "resuming thread");
     }
 

@@ -143,6 +143,7 @@ SC_API const sc_bind_proxy SC_BIND_PROXY_NIL;
 void
 sc_module::sc_module_init()
 {
+    INSCIGHT_MODULE_PHASE_STARTED(id(), PHASE_CONSTRUCTION);
     simcontext()->get_module_registry()->insert( *this );
     simcontext()->hierarchy_push( this );
     m_end_module_called = false;
@@ -325,6 +326,8 @@ sc_module::end_module()
 	sensitive_neg.reset();
 	m_end_module_called = true;
 	m_module_name_p = 0; // make sure we are not called in ~sc_module().
+    INSCIGHT_MODULE_PHASE_FINISHED(id(), PHASE_CONSTRUCTION);
+    INSCIGHT_MODULE_CREATED(id(), name(), kind());
     }
 }
 
@@ -387,7 +390,9 @@ void
 sc_module::construction_done()
 {
     hierarchy_scope scope(this);
+    INSCIGHT_MODULE_PHASE_STARTED(id(), PHASE_BEFORE_END_OF_ELABORATION);
     before_end_of_elaboration();
+    INSCIGHT_MODULE_PHASE_FINISHED(id(), PHASE_BEFORE_END_OF_ELABORATION);
 }
 
 // called by elaboration_done (does nothing by default)
@@ -413,7 +418,9 @@ sc_module::elaboration_done( bool& error_ )
         error_ = true;
     }
     hierarchy_scope scope(this);
+    INSCIGHT_MODULE_PHASE_STARTED(id(), PHASE_END_OF_ELABORATION);
     end_of_elaboration();
+    INSCIGHT_MODULE_PHASE_FINISHED(id(), PHASE_END_OF_ELABORATION);
 }
 
 // called by start_simulation (does nothing by default)
@@ -426,7 +433,9 @@ void
 sc_module::start_simulation()
 {
     hierarchy_scope scope(this);
+    INSCIGHT_MODULE_PHASE_STARTED(id(), PHASE_START_OF_SIMULATION);
     start_of_simulation();
+    INSCIGHT_MODULE_PHASE_FINISHED(id(), PHASE_START_OF_SIMULATION);
 }
 
 // called by simulation_done (does nothing by default)

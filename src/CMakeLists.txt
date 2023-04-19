@@ -64,6 +64,8 @@ if (APPLE)
   endif (N_OSX_ARCHITECTURES EQUAL 1)
 endif (APPLE)
 
+# Fix to make stack non-executable (done automatically for c/c++, but not asm)
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,--noexecstack")
 
 ###############################################################################
 # Build rules for SystemC library

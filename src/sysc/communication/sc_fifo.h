@@ -330,7 +330,7 @@ sc_fifo<T>::dump( ::std::ostream& os ) const
         int i = m_ri;
         int j = 0;
         do {
-	    os << "value[" << i << "] = " << m_buf[i] << ::std::endl;
+	    os << "value[" << j << "] = " << m_buf[i] << ::std::endl; // MWR FIXED
 	    i = ( i + 1 ) % m_size;
 	    j ++;
         } while( i != m_wi );

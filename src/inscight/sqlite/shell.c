@@ -82,6 +82,7 @@
 # define _LARGEFILE_SOURCE 1
 #endif
 
+#include <stdint.h> // MWR ADDED
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -1831,7 +1832,7 @@ static void SHA3Update(
 ){
   unsigned int i = 0;
 #if SHA3_BYTEORDER==1234
-  if( (p->nLoaded % 8)==0 && ((aData - (const unsigned char*)0)&7)==0 ){
+  if( (p->nLoaded % 8)==0 && ((uintptr_t)(aData)&7)==0 ){ // MWR FIXED
     for(; i+7<nData; i+=8){
       p->u.s[p->nLoaded/8] ^= *(u64*)&aData[i];
       p->nLoaded += 8;
@@ -15888,6 +15889,7 @@ static int sql_trace_callback(
 static void test_breakpoint(void){
   static int nCall = 0;
   nCall++;
+  (void) nCall; // MWR ADDED
 }
 
 /*

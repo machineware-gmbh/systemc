@@ -58,16 +58,20 @@ static void __sanitizer_start_switch_fiber(void** fake, void* stack_base,
 static void __sanitizer_finish_switch_fiber(void* fake, void** stack_base,
     size_t* size) __attribute__((weakref("__sanitizer_finish_switch_fiber")));
 
+// A sanitizer stack is needed when detect_stack_use_after_return=1 is set
+// in ASAN_OPTIONS (default was 0, but newer clang versions default to 1).
+static void* __sanitizer_stack = 0;
+
 static void __sanitizer_start_switch_cor_qt( sc_cor_qt* next ) {
     if (&__sanitizer_start_switch_fiber != NULL) {
-        __sanitizer_start_switch_fiber( NULL, next->m_stack,
+        __sanitizer_start_switch_fiber( &__sanitizer_stack, next->m_stack,
                                         next->m_stack_size );
     }
 }
 
 static void __sanitizer_finish_switch_cor_qt() {
     if (&__sanitizer_finish_switch_fiber != NULL) {
-        __sanitizer_finish_switch_fiber( NULL, NULL, NULL );
+        __sanitizer_finish_switch_fiber( __sanitizer_stack, NULL, NULL );
     }
 }
 

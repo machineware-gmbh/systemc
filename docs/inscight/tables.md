@@ -8,12 +8,12 @@ stored as its own CSV file called `<table>.<procid>.csv`.
 ----
 ## Meta
 The `meta` table holds meta information about the SystemC simulation, such as
-process-id, time-stamp, user-namem, etc. Only one data entry will be present.
-* `pid` (`BIGINT`) OS-specific process-ID of the simulation
-* `path` (`STRING`) OS-specific path to the simulation binary
-* `user` (`STRING`) Username of the user who started the simulation
-* `version` (`STRING`) Version string of the employed SystemC implementation
-* `timestamp` (`DATIME`) Unix timestamp when the simulation was started
+process-id, time-stamp, user-name, etc. Only one data entry will be present.
+* `pid` (`BIGINT`) os-specific process-ID of the simulation
+* `path` (`STRING`) os-specific path to the simulation binary
+* `user` (`STRING`) username of the user who started the simulation
+* `version` (`STRING`) version string of the employed SystemC implementation
+* `timestamp` (`DATIME`) unix-timestamp when the simulation was started
 
 Example table:
 | pid | path           | user  | version       | timestamp  |

@@ -77,6 +77,8 @@ protected:
     virtual void begin(size_t n) override;
     virtual void end(size_t n) override;
 
+    virtual void gen_meta(const meta_info& info) override;
+
     virtual void module_created(id_t obj, const char* name, const char* kind) override;
     virtual void process_created(id_t obj, const char* name, proc_kind kind) override;
     virtual void port_created(id_t obj, const char* name) override;

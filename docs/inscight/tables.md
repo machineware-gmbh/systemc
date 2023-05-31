@@ -6,6 +6,21 @@ the database backend, all tables are stored in a single sqlite3 database called
 stored as its own CSV file called `<table>.<procid>.csv`.
 
 ----
+## Meta
+The `meta` table holds meta information about the SystemC simulation, such as
+process-id, time-stamp, user-namem, etc. Only one data entry will be present.
+* `pid` (`BIGINT`) OS-specific process-ID of the simulation
+* `path` (`STRING`) OS-specific path to the simulation binary
+* `user` (`STRING`) Username of the user who started the simulation
+* `version` (`STRING`) Version string of the employed SystemC implementation
+* `timestamp` (`DATIME`) Unix timestamp when the simulation was started
+
+Example table:
+| pid | path           | user  | version       | timestamp  |
+|:---:|:--------------:|:-----:|:-------------:|:----------:|
+|`123`|`/bin/mysim.exe`| `jan` |`SystemC 2.3.3`|`1685538009`| 
+
+----
 ## Modules
 The `modules` table holds information about all SystemC modules present in the
 simulation. For each module, it stores the following fields:

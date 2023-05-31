@@ -29,6 +29,12 @@ static std::string escape(const std::string& s) {
     return ss.str();
 }
 
+void database_csv::gen_meta(const meta_info& info) {
+    m_db_meta << info.pid << "," << escape(info.path) << ","
+              << escape(info.user) << ","  << escape(info.version) << ","
+              << info.timestamp << "," << std::endl;
+}
+
 void database_csv::module_created(id_t obj, const char* nm, const char* kind) {
     m_db_modules << obj << "," << escape(nm) << "," << escape(kind) << std::endl;
 }
@@ -99,6 +105,7 @@ static const char* dbname(const std::string& options, const char* nm) {
 
 database_csv::database_csv(const std::string& options):
     database(options),
+    m_db_meta(dbname(options, "meta")),
     m_db_modules(dbname(options, "modules")),
     m_db_processes(dbname(options, "processes")),
     m_db_ports(dbname(options, "ports")),

@@ -10,6 +10,45 @@
  ******************************************************************************/
 
 #include "inscight/database.h"
+#include "sysc/kernel/sc_ver.h"
+
+#if defined(__linux__)
+#include <unistd.h>
+static std::string progpath() {
+    char path[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+
+    if (len == -1)
+        return "unknown";
+
+    path[len] = '\0';
+    return path;
+}
+
+static std::string username() {
+    char uname[256] = {};
+    if (getlogin_r(uname, sizeof(uname) - 1) == 0)
+        return uname;
+
+    const char* envuser = getenv("USER");
+    if (envuser)
+        return envuser;
+
+    return "unknown";
+}
+#else
+static std::string progpath() {
+    return "unknown";
+}
+
+static std::string username() {
+    return "unknown";
+}
+
+static int getpid() {
+    return -1;
+}
+#endif
 
 namespace inscight {
 
@@ -17,30 +56,35 @@ void database::work() {
     //pthread_setname_np(m_worker.native_handle(), "inscight_worker");
     init();
 
+    meta_info info;
+    info.path = progpath();
+    info.user = username();
+    info.version = sc_core::sc_version();
+    info.timestamp = std::time(nullptr);
+    info.pid = getpid();
+    gen_meta(info);
+
     while (true) {
         m_mtx.lock();
         m_cv.wait(m_mtx, [&]() -> bool {
             return !m_running || !m_entries.empty();
         });
 
-        if (!m_running) {
-            m_mtx.unlock();
-            return;
-        }
-
         std::vector<entry> copy;
         m_entries.swap(copy);
         m_mtx.unlock();
 
-        if (copy.empty())
-            continue;
+        if (!copy.empty()) {
+            begin(copy.size());
 
-        begin(copy.size());
+            for (const entry& e : copy)
+                process(e);
 
-        for (const entry& e : copy)
-            process(e);
+            end(copy.size());
+        }
 
-        end(copy.size());
+        if (!m_running)
+            return;
     }
 }
 

@@ -12,6 +12,7 @@
 #ifndef INSCIGHT_DATABASE_H
 #define INSCIGHT_DATABASE_H
 
+#include <string>
 #include <vector>
 #include <atomic>
 #include <mutex>
@@ -32,6 +33,8 @@ protected:
     std::vector<entry> m_entries;
     std::thread m_worker;
 
+    void gen_meta();
+
     void work();
 
     void process(const entry& e);
@@ -39,6 +42,16 @@ protected:
     virtual void init() {}
     virtual void begin(size_t n) {}
     virtual void end(size_t n) {}
+
+    struct meta_info {
+        std::string path;
+        std::string user;
+        std::string version;
+        std::time_t timestamp;
+        int pid;
+    };
+
+    virtual void gen_meta(const meta_info& info) = 0;
 
     virtual void module_created(id_t obj, const char* name, const char* kind) = 0;
     virtual void process_created(id_t obj, const char* name, proc_kind kind) = 0;

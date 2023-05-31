@@ -25,6 +25,7 @@ namespace inscight {
 class database_csv : public database
 {
 private:
+    std::ofstream m_db_meta;
     std::ofstream m_db_modules;
     std::ofstream m_db_processes;
     std::ofstream m_db_ports;
@@ -36,6 +37,8 @@ private:
     std::ofstream m_db_update;
 
 protected:
+    virtual void gen_meta(const meta_info& info) override;
+
     virtual void module_created(id_t obj, const char* name, const char* kind) override;
     virtual void process_created(id_t obj, const char* name, proc_kind kind) override;
     virtual void port_created(id_t obj, const char* name) override;

@@ -13,6 +13,7 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <sstream>
 
 #define SQL_ERROR(...) do {       \
     fprintf(stderr, __VA_ARGS__); \
@@ -100,6 +101,7 @@ void database_sql::exec(const std::string& cmd) {
 void database_sql::init() {
     m_db.open();
 
+    exec("CREATE TABLE meta(pid BIGINT PRIMARY KEY, path STRING, user STRING, version STRING, time DATETIME);");
     exec("CREATE TABLE modules(id BIGINT PRIMARY KEY, name STRING, kind STRING);");
     exec("CREATE TABLE processes(id BIGINT PRIMARY KEY, name STRING, kind INTEGER);");
     exec("CREATE TABLE ports(id BIGINT PRIMARY KEY, name STRING);");
@@ -117,6 +119,14 @@ void database_sql::begin(size_t n) {
 
 void database_sql::end(size_t n) {
     m_stmt_tx_end.execute();
+}
+
+void database_sql::gen_meta(const meta_info& info) {
+    std::stringstream ss;
+    ss << "INSERT INTO meta (pid, path, user, version, time) VALUES ("
+       << info.pid << ",'" << info.path << "','" << info.user << "','"
+       << info.version << "'," << info.timestamp << ");";
+    exec(ss.str());
 }
 
 void database_sql::module_created(id_t obj, const char* name, const char* kind) {

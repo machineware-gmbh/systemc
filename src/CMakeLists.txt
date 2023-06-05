@@ -550,7 +550,6 @@ target_sources(systemc PRIVATE inscight/context.cpp)
 target_sources(systemc PRIVATE inscight/sqlite/sqlite3.c)
 target_sources(systemc PRIVATE inscight/sqlite/sqlite3.h)
 target_sources(systemc PRIVATE inscight/sqlite/sqlite3ext.h)
-target_sources(systemc PRIVATE inscight/sqlite/shell.c)
 target_compile_definitions(systemc PUBLIC HAVE_INSCIGHT)
 target_link_libraries(systemc PUBLIC dl)
 

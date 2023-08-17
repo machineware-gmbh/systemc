@@ -79,4 +79,5 @@ _UpgradeReport_Files/
 /.cproject
 /.settings
 /BUILD
-
+/.vs
+/CMakeSettings.json

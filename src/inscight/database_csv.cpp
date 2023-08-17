@@ -11,8 +11,13 @@
 
 #include "inscight/database_csv.h"
 
-#include <unistd.h>
 #include <string.h>
+
+#ifdef _MSC_VER
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 namespace inscight {
 

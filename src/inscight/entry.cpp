@@ -9,26 +9,17 @@
  *                                                                            *
  ******************************************************************************/
 
-#include <time.h>
 #include <systemc>
+#include <chrono>
 
 #include "inscight/context.h"
 
 namespace inscight {
 
-static real_time_t _real_time_stamp() {
-    struct timespec tp = {};
-    if (clock_gettime(CLOCK_MONOTONIC, &tp)) {
-        perror("clock_gettime");
-        exit(EXIT_FAILURE);
-    }
-
-    return (real_time_t)tp.tv_sec * 1000000000ull + (real_time_t)tp.tv_nsec;
-}
-
 real_time_t real_time_stamp() {
-    static real_time_t start = _real_time_stamp();
-    return _real_time_stamp() - start;
+    static auto start = std::chrono::steady_clock::now();
+    auto delta = std::chrono::steady_clock::now() - start;
+    return std::chrono::duration_cast<std::chrono::nanoseconds>(delta).count();
 }
 
 sysc_time_t sysc_time_stamp() {

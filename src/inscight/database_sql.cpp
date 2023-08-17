@@ -12,8 +12,13 @@
 #include "inscight/database_sql.h"
 
 #include <string.h>
-#include <unistd.h>
 #include <sstream>
+
+#ifdef _MSC_VER
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 #define SQL_ERROR(...) do {       \
     fprintf(stderr, __VA_ARGS__); \

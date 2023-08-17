@@ -36,7 +36,27 @@ static std::string username() {
 
     return "unknown";
 }
+
+#elif defined(_MSC_VER)
+#include <Windows.h>
+
+static std::string progpath() {
+    TCHAR path[MAX_PATH] = {};
+    if (GetModuleFileName(NULL, path, MAX_PATH) == 0)
+        return "unknown";
+    return std::string(path);
+}
+
+static std::string username() {
+    TCHAR name[MAX_PATH] = {};
+    DWORD namelen = sizeof(name);
+    if (GetUserName(name, &namelen))
+        return std::string(name);
+    return "unkown";
+}
+
 #else
+
 static std::string progpath() {
     return "unknown";
 }
@@ -45,9 +65,6 @@ static std::string username() {
     return "unknown";
 }
 
-static int getpid() {
-    return -1;
-}
 #endif
 
 namespace inscight {

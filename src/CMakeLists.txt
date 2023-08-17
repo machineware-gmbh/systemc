@@ -551,5 +551,4 @@ target_sources(systemc PRIVATE inscight/sqlite/sqlite3.c)
 target_sources(systemc PRIVATE inscight/sqlite/sqlite3.h)
 target_sources(systemc PRIVATE inscight/sqlite/sqlite3ext.h)
 target_compile_definitions(systemc PUBLIC HAVE_INSCIGHT)
-target_link_libraries(systemc PUBLIC dl)
-
+target_link_libraries(systemc PUBLIC ${CMAKE_DL_LIBS})

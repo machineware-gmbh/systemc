@@ -783,19 +783,19 @@ add_subdirectory (src)
 
 # Export the systemc library target for usage by other programs
 # ... to local build tree
-# export (TARGETS systemc
-#         NAMESPACE SystemC::
-#         FILE SystemCLanguageTargets.cmake)
+ export (TARGETS systemc
+         NAMESPACE SystemC::
+         FILE SystemCLanguageTargets.cmake)
 # ... to installation tree
-# install (EXPORT SystemCLanguageTargets
-#          NAMESPACE SystemC::
-#          DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
-#          COMPONENT dev)
+ install (EXPORT SystemCLanguageTargets
+          NAMESPACE SystemC::
+          DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
+          COMPONENT dev)
 
 # Register the SystemCLanguage and SystemCTLM packages for use from the
 # build tree. (This registers the build tree with the global CMake-registry.)
-# export (PACKAGE SystemCLanguage)
-# export (PACKAGE SystemCTLM)
+ export (PACKAGE SystemCLanguage)
+ export (PACKAGE SystemCTLM)
 
 # Create the <Package>Config.cmake and <Package>ConfigVersion files
 # include(CMakePackageConfigHelpers)

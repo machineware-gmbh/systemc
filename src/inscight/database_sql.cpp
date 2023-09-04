@@ -112,10 +112,10 @@ void database_sql::init() {
     exec("CREATE TABLE ports(id BIGINT PRIMARY KEY, name STRING);");
     exec("CREATE TABLE events(id BIGINT PRIMARY KEY, name STRING);");
     exec("CREATE TABLE channels(id BIGINT PRIMARY KEY, name STRING, kind STRING);");
-    exec("CREATE TABLE elab(rt BIGINT PRIMARY KEY, module BIGINT, phase INTEGER, status INTEGER);");
-    exec("CREATE TABLE sched(rt BIGINT PRIMARY KEY, proc BIGINT, status INTEGER, st BIGINT);");
-    exec("CREATE TABLE notify(rt BIGINT PRIMARY KEY, event BIGINT, kind INTEGER, st BIGINT, delay BIGINT);");
-    exec("CREATE TABLE updates(rt BIGINT PRIMARY KEY, channel BIGINT, status INTEGER, st BIGINT);");
+    exec("CREATE TABLE elab(id INTEGER PRIMARY KEY, rt BIGINT, module BIGINT, phase INTEGER, status INTEGER);");
+    exec("CREATE TABLE sched(id INTEGER PRIMARY KEY, rt BIGINT, proc BIGINT, status INTEGER, st BIGINT);");
+    exec("CREATE TABLE notify(id INTEGER PRIMARY KEY, rt BIGINT, event BIGINT, kind INTEGER, st BIGINT, delay BIGINT);");
+    exec("CREATE TABLE updates(id INTEGER PRIMARY KEY, rt BIGINT, channel BIGINT, status INTEGER, st BIGINT);");
 }
 
 void database_sql::begin(size_t n) {

@@ -13,22 +13,12 @@
 #define INSCIGHT_ID_H
 
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 
 namespace inscight {
 
-typedef size_t id_t;
-
-struct id {
-    id_t val;
-
-    id(): val() {
-        static id_t n = 1;
-        val = n++;
-    }
-
-    constexpr id_t operator()() const { return val; }
-};
+typedef uintptr_t id_t;
 
 } // namespace inscight
 

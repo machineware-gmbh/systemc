@@ -158,7 +158,7 @@ private:
 
 #ifdef HAVE_INSCIGHT
 public:
-    const inscight::id id;
+    inscight::id_t id() const { return reinterpret_cast<inscight::id_t>(this); }
 #endif
 };
 

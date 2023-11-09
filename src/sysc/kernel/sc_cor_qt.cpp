@@ -91,6 +91,7 @@ static inline __attribute__((always_inline)) bool tsan_present() {
 
 static inline __attribute__((always_inline))
 void sanitizer_start_switch( sc_cor_qt* next, void** context_save ) {
+#ifndef __APPLE__
     if( sanitizer_present() ) {
         __sanitizer_start_switch_fiber( context_save, next->m_stack,
                                         next->m_stack_size );
@@ -100,10 +101,12 @@ void sanitizer_start_switch( sc_cor_qt* next, void** context_save ) {
         else
             __tsan_cleanup = __tsan_get_current_fiber();
     }
+#endif
 }
 
 static inline __attribute__((always_inline))
 void sanitizer_finish_switch( sc_cor_qt* next, void* context_save ) {
+#ifndef __APPLE__
     if( sanitizer_present() ) {
         __sanitizer_finish_switch_fiber( context_save, NULL, NULL );
     } else if( tsan_present() ) {
@@ -115,6 +118,7 @@ void sanitizer_finish_switch( sc_cor_qt* next, void* context_save ) {
             __tsan_cleanup = NULL;
         }
     }
+#endif
 }
 
 // ----------------------------------------------------------------------------

@@ -37,6 +37,31 @@ static std::string username() {
     return "unknown";
 }
 
+#elif defined(__APPLE__)
+#include <unistd.h>
+#include <mach-o/dyld.h>
+
+static std::string progpath() {
+    char path[PATH_MAX];
+    uint32_t size = sizeof(path);
+    if (_NSGetExecutablePath(path, &size))
+        return "unknown";
+
+    return path;
+}
+
+static std::string username() {
+    char uname[256] = {};
+    if (getlogin_r(uname, sizeof(uname) - 1) == 0)
+        return uname;
+
+    const char* envuser = getenv("USER");
+    if (envuser)
+        return envuser;
+
+    return "unknown";
+}
+
 #elif defined(_MSC_VER)
 #include <Windows.h>
 
@@ -70,7 +95,6 @@ static std::string username() {
 namespace inscight {
 
 void database::work() {
-    //pthread_setname_np(m_worker.native_handle(), "inscight_worker");
     init();
 
     meta_info info;

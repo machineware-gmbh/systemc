@@ -26,6 +26,7 @@ namespace inscight {
 class database
 {
 protected:
+    std::atomic<bool> m_enabled;
     std::atomic<bool> m_running;
 
     std::mutex m_mtx;

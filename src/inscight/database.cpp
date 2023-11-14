@@ -185,42 +185,44 @@ void database::process(const entry& e) {
         break;
 
     case PROCESS_START:
-        if (rt_trace_enabled)
+        m_enabled = rt_trace_enabled;
+        if (m_enabled)
             process_start(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case PROCESS_YIELD:
-        if (rt_trace_enabled)
+        if (m_enabled)
             process_yield(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        m_enabled = rt_trace_enabled;
         break;
 
     case EVENT_NOTIFY_IMMEDIATE:
-        if (rt_trace_enabled)
+        if (m_enabled)
             event_notify_immediate(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case EVENT_NOTIFY_DELTA:
-        if (rt_trace_enabled)
+        if (m_enabled)
             event_notify_delta(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case EVENT_NOTIFY_TIMED:
-        if (rt_trace_enabled)
+        if (m_enabled)
             event_notify_timed(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1, (sysc_time_t)e.arg2);
         break;
 
     case EVENT_CANCEL:
-        if (rt_trace_enabled)
+        if (m_enabled)
             event_cancel(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case CHANNEL_UPDATE_START:
-        if (rt_trace_enabled)
+        if (m_enabled)
             channel_update_start(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case CHANNEL_UPDATE_COMPLETE:
-        if (rt_trace_enabled)
+        if (m_enabled)
             channel_update_complete(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
@@ -244,6 +246,7 @@ void database::stop() {
 }
 
 database::database(const std::string& options):
+    m_enabled(true),
     m_running(),
     m_mtx(),
     m_cv(),

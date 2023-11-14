@@ -14,6 +14,8 @@
 
 #if defined(__linux__)
 #include <unistd.h>
+#include <signal.h>
+
 static std::string progpath() {
     char path[PATH_MAX];
     ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
@@ -94,6 +96,22 @@ static std::string username() {
 
 namespace inscight {
 
+static bool rt_trace_enabled = true;
+
+#ifdef __linux__
+static void handle_sigusr(int sig) {
+    rt_trace_enabled = !rt_trace_enabled;
+
+    const char* msg;
+    if (rt_trace_enabled)
+        msg = "INSCIGHT: rt-tracing enabled\n";
+    else
+        msg = "INSCIGHT: rt-tracing disabled\n";
+
+    write(STDERR_FILENO, msg, strlen(msg));
+}
+#endif
+
 void database::work() {
     init();
 
@@ -167,35 +185,43 @@ void database::process(const entry& e) {
         break;
 
     case PROCESS_START:
-        process_start(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            process_start(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case PROCESS_YIELD:
-        process_yield(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            process_yield(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case EVENT_NOTIFY_IMMEDIATE:
-        event_notify_immediate(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            event_notify_immediate(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case EVENT_NOTIFY_DELTA:
-        event_notify_delta(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            event_notify_delta(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case EVENT_NOTIFY_TIMED:
-        event_notify_timed(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1, (sysc_time_t)e.arg2);
+        if (rt_trace_enabled)
+            event_notify_timed(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1, (sysc_time_t)e.arg2);
         break;
 
     case EVENT_CANCEL:
-        event_cancel(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            event_cancel(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case CHANNEL_UPDATE_START:
-        channel_update_start(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            channel_update_start(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     case CHANNEL_UPDATE_COMPLETE:
-        channel_update_complete(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
+        if (rt_trace_enabled)
+            channel_update_complete(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
     default:
@@ -223,6 +249,9 @@ database::database(const std::string& options):
     m_cv(),
     m_entries(),
     m_worker() {
+#ifdef __linux__
+    signal(SIGUSR2, handle_sigusr);
+#endif
 }
 
 database::~database() {

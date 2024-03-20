@@ -108,7 +108,8 @@ static void handle_sigusr(int sig) {
     else
         msg = "INSCIGHT: rt-tracing disabled\n";
 
-    (void)write(STDERR_FILENO, msg, strlen(msg));
+    ssize_t r = write(STDERR_FILENO, msg, strlen(msg));
+    (void)r;
 }
 #endif
 

@@ -511,9 +511,21 @@ vec_zero(int from, int ulen, sc_digit *u)
   sc_assert((ulen > 0) && (u != NULL));
 #endif
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Warray-bounds"
+#endif
+
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+
   for(int i = from; i < ulen; i++)
     u[i] = 0;
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 }
 
 // Set u[i] = 0 where i = 0 .. (ulen - 1).

@@ -538,6 +538,7 @@ install (DIRECTORY ./
 ###############################################################################
 option(INSCIGHT "Include InSCight support" ON)
 if(INSCIGHT)
+    message(STATUS "Enable InSCight support")
     target_sources(systemc PRIVATE inscight/inscight.h)
     target_sources(systemc PRIVATE inscight/entry.h)
     target_sources(systemc PRIVATE inscight/entry.cpp)

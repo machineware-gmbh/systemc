@@ -36,6 +36,9 @@
 #define INSCIGHT_CHANNEL_CREATED(obj, name, kind) \
     INSCIGHT_TRACE(::inscight::CHANNEL_CREATED, obj, strdup(name), strdup(kind))
 
+#define INSCIGHT_PORT_BOUND(from, to, kind, type) \
+    INSCIGHT_TRACE(::inscight::PORT_BOUND, from, to, ::inscight::kind, ::inscight::protocol_from_str(type))
+
 #define INSCIGHT_MODULE_PHASE_STARTED(obj, phase)                             \
     INSCIGHT_TRACE(::inscight::MODULE_PHASE_STARTED, obj, ::inscight::phase,  \
                    ::inscight::real_time_stamp())

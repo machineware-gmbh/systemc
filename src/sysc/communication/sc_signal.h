@@ -275,6 +275,7 @@ void
 sc_signal_t<T,POL>::register_port( sc_port_base& port_
                                  , const char* if_typename_ )
 {
+    INSCIGHT_PORT_BOUND(port_.id(), this->id(), BIND_NORMAL, if_typename_);
     bool is_output = std::string( if_typename_ ) == typeid(if_type).name();
     if( !policy_type::check_port( this, &port_, is_output ) )
        ((void)0); // fallback? error has been suppressed ...

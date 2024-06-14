@@ -35,6 +35,7 @@ private:
     std::ofstream m_db_scheduling;
     std::ofstream m_db_notify;
     std::ofstream m_db_update;
+    std::ofstream m_db_bindings;
 
 protected:
     virtual void gen_meta(const meta_info& info) override;
@@ -44,6 +45,8 @@ protected:
     virtual void port_created(id_t obj, const char* name) override;
     virtual void event_created(id_t obj, const char* name) override;
     virtual void channel_created(id_t obj, const char* name, const char* kind) override;
+
+    virtual void port_bound(id_t from, id_t to, binding_kind kind, protocol_kind proto) override;
 
     virtual void module_phase_started(id_t obj, module_phase phase, real_time_t t) override;
     virtual void module_phase_finished(id_t obj, module_phase phase, real_time_t t) override;

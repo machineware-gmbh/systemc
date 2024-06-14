@@ -177,6 +177,10 @@ void database::process(const entry& e) {
         free((void*)e.arg1);
         break;
 
+    case PORT_BOUND:
+        port_bound(e.id, (id_t)e.arg0, (binding_kind)e.arg1, (protocol_kind)e.arg2);
+        break;
+
     case MODULE_PHASE_STARTED:
         module_phase_started(e.id, (module_phase)e.arg0, (real_time_t)e.arg1);
         break;

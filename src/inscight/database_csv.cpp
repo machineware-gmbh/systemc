@@ -60,6 +60,9 @@ void database_csv::channel_created(id_t obj, const char* nm, const char* kind) {
     m_db_channels << obj << "," << escape(nm) << "," << escape(kind) << std::endl;
 }
 
+void database_csv::port_bound(id_t from, id_t to, binding_kind kind, protocol_kind proto) {
+    m_db_bindings << from << "," << to << "," << binding_str(kind) << "," << protocol_str(proto) << std::endl;
+}
 
 void database_csv::module_phase_started(id_t obj, module_phase phase, real_time_t t) {
     m_db_elab << t << ",START," << obj << "," << phase_str(phase) << std::endl;
@@ -119,7 +122,8 @@ database_csv::database_csv(const std::string& options):
     m_db_elab(dbname(options, "elab")),
     m_db_scheduling(dbname(options, "scheduling")),
     m_db_notify(dbname(options, "notify")),
-    m_db_update(dbname(options, "update")) {
+    m_db_update(dbname(options, "update")),
+    m_db_bindings(dbname(options, "bindings")) {
 }
 
 database_csv::~database_csv() {

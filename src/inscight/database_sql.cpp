@@ -116,6 +116,7 @@ void database_sql::init() {
     exec("CREATE TABLE sched(id INTEGER PRIMARY KEY, rt BIGINT, proc BIGINT, status INTEGER, st BIGINT);");
     exec("CREATE TABLE notify(id INTEGER PRIMARY KEY, rt BIGINT, event BIGINT, kind INTEGER, st BIGINT, delay BIGINT);");
     exec("CREATE TABLE updates(id INTEGER PRIMARY KEY, rt BIGINT, channel BIGINT, status INTEGER, st BIGINT);");
+    exec("CREATE TABLE bindings(id INTEGER PRIMARY KEY, from_port BIGINT, to_port BIGINT, kind INTEGER, proto BIGINT);");
 }
 
 void database_sql::begin(size_t n) {
@@ -165,6 +166,14 @@ void database_sql::channel_created(id_t obj, const char* name, const char* kind)
     m_stmt_insert_channel.bind(2, name);
     m_stmt_insert_channel.bind(3, kind);
     m_stmt_insert_channel.execute();
+}
+
+void database_sql::port_bound(id_t from, id_t to, binding_kind kind, protocol_kind proto) {
+    m_stmt_insert_binding.bind(1, from);
+    m_stmt_insert_binding.bind(2, to);
+    m_stmt_insert_binding.bind(3, kind);
+    m_stmt_insert_binding.bind(4, proto);
+    m_stmt_insert_binding.execute();
 }
 
 void database_sql::module_phase_started(id_t obj, module_phase phase, real_time_t rt) {
@@ -264,7 +273,8 @@ database_sql::database_sql(const std::string& options):
     m_stmt_insert_elab(m_db, "INSERT INTO elab (rt, module, phase, status) VALUES (?1, ?2, ?3, ?4)"),
     m_stmt_insert_schedule(m_db, "INSERT INTO sched (rt, proc, status, st) VALUES (?1, ?2, ?3, ?4)"),
     m_stmt_insert_notify(m_db, "INSERT INTO notify (rt, event, kind, st, delay) VALUES (?1, ?2, ?3, ?4, ?5)"),
-    m_stmt_insert_update(m_db, "INSERT INTO updates (rt, channel, status, st) VALUES (?1, ?2, ?3, ?4)") {
+    m_stmt_insert_update(m_db, "INSERT INTO updates (rt, channel, status, st) VALUES (?1, ?2, ?3, ?4)"),
+    m_stmt_insert_binding(m_db, "INSERT INTO bindings (from_port, to_port, kind, proto) VALUES (?1, ?2, ?3, ?4)") {
 }
 
 database_sql::~database_sql() {

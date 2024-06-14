@@ -106,6 +106,7 @@ public:
     (s.get_base_port())(get_base_interface());
     // target.port -> initiator.export
     get_base_port()(s.get_base_interface());
+    INSCIGHT_PORT_BOUND(get_base_port().id(), s.get_base_port().id(), BIND_NORMAL, get_protocol_types().name());
   }
 
   void operator() (base_initiator_socket_type& s)
@@ -123,6 +124,8 @@ public:
     (get_base_export())(s.get_base_export());
     // port
     (s.get_base_port())(get_base_port());
+
+    INSCIGHT_PORT_BOUND(get_base_port().id(), s.get_base_port().id(), BIND_HIERARCHY, get_protocol_types().name());
   }
 
   void operator() (base_type& s)

@@ -60,6 +60,8 @@ protected:
     virtual void event_created(id_t obj, const char* name) = 0;
     virtual void channel_created(id_t obj, const char* name, const char* kind) = 0;
 
+    virtual void port_bound(id_t from, id_t to, binding_kind kind, protocol_kind proto) = 0;
+
     virtual void module_phase_started(id_t obj, module_phase phase, real_time_t t) = 0;
     virtual void module_phase_finished(id_t obj, module_phase phase, real_time_t t) = 0;
 

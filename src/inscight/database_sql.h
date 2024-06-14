@@ -69,6 +69,7 @@ private:
     stmt m_stmt_insert_schedule;
     stmt m_stmt_insert_notify;
     stmt m_stmt_insert_update;
+    stmt m_stmt_insert_binding;
 
     void exec(const std::string& cmd);
 
@@ -84,6 +85,8 @@ protected:
     virtual void port_created(id_t obj, const char* name) override;
     virtual void event_created(id_t obj, const char* name) override;
     virtual void channel_created(id_t obj, const char* name, const char* kind) override;
+
+    virtual void port_bound(id_t from, id_t to, binding_kind kind, protocol_kind proto) override;
 
     virtual void module_phase_started(id_t obj, module_phase phase, real_time_t t) override;
     virtual void module_phase_finished(id_t obj, module_phase phase, real_time_t t) override;

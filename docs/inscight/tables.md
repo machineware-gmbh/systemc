@@ -174,3 +174,36 @@ Example table:
 | 123979 |  19     | 1      | 0        |
 | 590927 |  812    | 0      | 22656010 |
 | 598001 |  812    | 1      | 22656010 |
+
+----
+## Port Bindings
+The `bindings` table holds information about which SystemC ports have been
+bound to which other port during elaboration.
+* `from_port` (`BIGINT`) ID of the binding port
+* `to_port` (`BIGINT`) ID of the bound port
+* `kind` (`BIGINT`) Kind of binding (0: `NORMAL`, 1: `HIERARCHICAL`)
+* `proto` (`BIGINT`) Protocol ID of the ports
+
+| proto | description            |
+| :---: | :--------------------: |
+| 0     | unknown protocol       |
+| 1     | `sc_signal<T>`         |
+| 2     | TLM sockets            |
+| 3     | VCML GPIO protocol     |
+| 4     | VCML CLK protocol      |
+| 5     | VCML PCI protocol      |
+| 6     | VCML I2C protocol      |
+| 7     | VCML SPI protocol      |
+| 8     | VCML SD protocol       |
+| 9     | VCML serial protocol   |
+| 10    | VCML virtio protocol   |
+| 11    | VCML ethernet protocol |
+| 12    | VCML CAN protocol      |
+| 13    | VCML USB protocol      |
+
+Example table:
+| from_port | to_port | kind | proto |
+| :-------: | :-----: | :--: | :---: |
+| 1001      | 1003    | 1    | 2     |
+| 1002      | 1004    | 0    | 3     |
+| 4501      | 24222   | 0    | 9     |

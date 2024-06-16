@@ -231,6 +231,41 @@ void database::process(const entry& e) {
             channel_update_complete(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1);
         break;
 
+    case CPU_IDLE_ENTER:
+        if (m_enabled)
+            cpu_idle_enter(e.id, (sysc_time_t)e.arg0);
+        break;
+
+    case CPU_IDLE_LEAVE:
+        if (m_enabled)
+            cpu_idle_leave(e.id, (sysc_time_t)e.arg0);
+        break;
+
+    case CPU_CALL_STACK:
+        if (m_enabled)
+            cpu_call_stack(e.id, (sysc_time_t)e.arg0, (size_t)e.arg1, (unsigned long long)e.arg2, (const char*)e.arg3);
+        free((void*)e.arg3);
+        break;
+
+    case TRANSACTION_TRACE_FW:
+        if (m_enabled)
+            transaction_trace_fw(e.id, (sysc_time_t)e.arg0, (protocol_kind)e.arg1, (const char*)e.arg2);
+        free((void*)e.arg2);
+        break;
+
+    case TRANSACTION_TRACE_BW:
+        if (m_enabled)
+            transaction_trace_bw(e.id, (sysc_time_t)e.arg0, (protocol_kind)e.arg1, (const char*)e.arg2);
+        free((void*)e.arg2);
+        break;
+
+    case LOG_MESSAGE:
+        if (m_enabled)
+            log_message((sysc_time_t)e.arg0, (int)e.arg1, (const char*)e.arg2, (const char*)e.arg3);
+        free((void*)e.arg2);
+        free((void*)e.arg3);
+        break;
+
     default:
         fprintf(stderr, "ignoring unknown database entry kind %u\n", e.kind);
         break;

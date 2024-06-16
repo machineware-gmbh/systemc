@@ -92,6 +92,16 @@ enum entry_kind {
 
     CHANNEL_UPDATE_START,
     CHANNEL_UPDATE_COMPLETE,
+
+    CPU_IDLE_ENTER,
+    CPU_IDLE_LEAVE,
+
+    CPU_CALL_STACK,
+
+    TRANSACTION_TRACE_FW,
+    TRANSACTION_TRACE_BW,
+
+    LOG_MESSAGE,
 };
 
 struct entry {

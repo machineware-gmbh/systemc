@@ -36,6 +36,10 @@ private:
     std::ofstream m_db_notify;
     std::ofstream m_db_update;
     std::ofstream m_db_bindings;
+    std::ofstream m_db_cpuidle;
+    std::ofstream m_db_cpustack;
+    std::ofstream m_db_transactions;
+    std::ofstream m_db_logmsg;
 
 protected:
     virtual void gen_meta(const meta_info& info) override;
@@ -62,6 +66,15 @@ protected:
     virtual void channel_update_start(id_t obj, real_time_t rt, sysc_time_t st) override;
     virtual void channel_update_complete(id_t obj, real_time_t rt, sysc_time_t st) override;
 
+    virtual void cpu_idle_enter(id_t obj, sysc_time_t st) override;
+    virtual void cpu_idle_leave(id_t obj, sysc_time_t st) override;
+
+    virtual void cpu_call_stack(id_t obj, sysc_time_t st, size_t level, unsigned long long addr, const char* sym) override;
+
+    virtual void transaction_trace_fw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) override;
+    virtual void transaction_trace_bw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) override;
+
+    virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) override;
 public:
     database_csv(const std::string& options);
     virtual ~database_csv();

@@ -76,6 +76,16 @@ protected:
     virtual void channel_update_start(id_t obj, real_time_t rt, sysc_time_t st) = 0;
     virtual void channel_update_complete(id_t obj, real_time_t rt, sysc_time_t st) = 0;
 
+    virtual void cpu_idle_enter(id_t obj, sysc_time_t st) = 0;
+    virtual void cpu_idle_leave(id_t obj, sysc_time_t st) = 0;
+
+    virtual void cpu_call_stack(id_t obj, sysc_time_t st, size_t level, unsigned long long addr, const char* sym) = 0;
+
+    virtual void transaction_trace_fw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) = 0;
+    virtual void transaction_trace_bw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) = 0;
+
+    virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) = 0;
+
 public:
     template <typename... ARGS>
     void insert(ARGS&&... args) {

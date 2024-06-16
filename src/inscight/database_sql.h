@@ -70,6 +70,10 @@ private:
     stmt m_stmt_insert_notify;
     stmt m_stmt_insert_update;
     stmt m_stmt_insert_binding;
+    stmt m_stmt_insert_cpuidle;
+    stmt m_stmt_insert_cpustack;
+    stmt m_stmt_insert_transaction;
+    stmt m_stmt_insert_logmsg;
 
     void exec(const std::string& cmd);
 
@@ -101,6 +105,16 @@ protected:
 
     virtual void channel_update_start(id_t obj, real_time_t rt, sysc_time_t st) override;
     virtual void channel_update_complete(id_t obj, real_time_t rt, sysc_time_t st) override;
+
+    virtual void cpu_idle_enter(id_t obj, sysc_time_t st) override;
+    virtual void cpu_idle_leave(id_t obj, sysc_time_t st) override;
+
+    virtual void cpu_call_stack(id_t obj, sysc_time_t st, size_t level, unsigned long long addr, const char* sym) override;
+
+    virtual void transaction_trace_fw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) override;
+    virtual void transaction_trace_bw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) override;
+
+    virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) override;
 
 public:
     database_sql(const std::string& options);

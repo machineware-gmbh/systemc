@@ -207,3 +207,74 @@ Example table:
 | 1001      | 1003    | 1    | 2     |
 | 1002      | 1004    | 0    | 3     |
 | 4501      | 24222   | 0    | 9     |
+
+----
+## Transactions
+The `transactions table holds information about transactions that have been
+traced during the simulation:
+* `st` (`BIGINT`): Simulation time stamp in picoseconds
+* `dir` (`INTEGER`): Trace direction
+    - 0: transaction traced on path to target
+    - 1: transaction traced on return path from target
+* `port` (`BIGINT`): ID of the port that recorded the trace
+* `proto` (`INTEGER`): Protocol ID of the transaction (see table above)
+* `json` (`TEXT`): JSON representation of the transaction payload
+
+The interpretation of the `json` field is dependant on the protocol ID found
+in `proto` and may also be empty for some protocols, e.g., `{}`.
+
+----
+## Log Messages
+The `logmsg` table holds information about which log messages have been posted
+during the simulation.
+* `st` (`BIGINT`): Simulation time stamp in picoseconds
+* `loglvl` (`INTEGER`): information log level:
+    - 0: error messages
+    - 1: warning messages
+    - 2: informational messages
+    - 3: debug messages
+* `sender` (`TEXT`): name of entity that generated the log message
+* `msg` (`TEXT`): the actual log messages
+
+Example table:
+|  st    | loglvl | sender    | msg           |
+| :----: | :----: | :----:    | :-----------: |
+| 123445 | 0      | my_module | A log message |
+
+----
+## CPU Idle Trace
+The `cpuidle` table holds information when a CPU has entered and left its idle
+state (wait-for-interrupt).
+* `st` (`BIGINT`): Simulation time stamp in picoseconds
+* `cpu` (`BIGINT`): ID of the corresponding processor
+* `idle` (`INTEGER`): Idle state of the CPU (0:active, 1:idle)
+
+Example table:
+| st     | cpu     | idle  |
+| :----: | :-----: | :---: |
+| 12344  | 13033   | 1     |
+| 25012  | 13033   | 0     |
+
+----
+## CPU Call Stack Trace
+The `cpustack` table holds information about the CPU call stack that has been
+sampled during the simulation:
+* `st` (`BIGINT`): Simulation time stamp in picoseconds
+* `cpu` (`BIGINT`): ID of the corresponding processor
+* `level` (`INTEGER`): Level of the current stack frame
+* `addr` (`BIGINT`): Stack frame program counter
+* `sym` (`TEXT`): Name of the function currently executing (if available)
+
+Example table:
+| st       | cpu   | level | addr      | sym    |
+| :------: | :---: | :---: | :-------: | :----: |
+| 11223344 | 13033 | 0     | 0x8000120 | printf |
+| 11223344 | 13033 | 1     | 0x8002030 | foo    |
+| 11223344 | 13033 | 2     | 0x8000000 | main   |
+| 20488000 | 13033 | 0     | 0x8000660 | memcpy |
+| 20488000 | 13033 | 1     | 0x8000000 | main   |
+
+This corresponds to two callstacks:
+- main > foo > printf (recorded at 11223344ps for cpu module 13033)
+- main > memcpy (recorded at 20488000ps for cpu module 13033)
+

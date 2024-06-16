@@ -104,6 +104,30 @@ void database_csv::channel_update_complete(id_t obj, real_time_t rt, sysc_time_t
     m_db_update << rt << ",COMPLETE," << obj << "," << st << std::endl;
 }
 
+void database_csv::cpu_idle_enter(id_t obj, sysc_time_t st) {
+    m_db_cpuidle << st << "," << obj << "," << "IDLE_ENTER" << std::endl;
+}
+
+void database_csv::cpu_idle_leave(id_t obj, sysc_time_t st) {
+    m_db_cpuidle << st << "," << obj << "," << "IDLE_LEAVE" << std::endl;
+}
+
+void database_csv::cpu_call_stack(id_t obj, sysc_time_t st, size_t level, unsigned long long addr, const char* sym) {
+    m_db_cpustack << st << "," << obj << "," << level << ",0x" << std::hex << addr << std::dec << ",\"" << sym << "\"" << std::endl;
+}
+
+void database_csv::transaction_trace_fw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) {
+    m_db_transactions << st << "," << obj << ",fw," << protocol_str(proto) << ","  << json << std::endl;
+}
+
+void database_csv::transaction_trace_bw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) {
+    m_db_transactions << st << "," << obj << ",bw," << protocol_str(proto) << ",\""  << json << "\"" << std::endl;
+}
+
+void database_csv::log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) {
+    m_db_logmsg << st << "," << loglevel << ",\"" << sender  << "\",\"" << message << "\"" << std::endl;
+}
+
 static const char* dbname(const std::string& options, const char* nm) {
     static char name[256];
     memset(name, 0, sizeof(name));
@@ -123,7 +147,11 @@ database_csv::database_csv(const std::string& options):
     m_db_scheduling(dbname(options, "scheduling")),
     m_db_notify(dbname(options, "notify")),
     m_db_update(dbname(options, "update")),
-    m_db_bindings(dbname(options, "bindings")) {
+    m_db_bindings(dbname(options, "bindings")),
+    m_db_cpuidle(dbname(options, "cpuidle")),
+    m_db_cpustack(dbname(options, "cpustack")),
+    m_db_transactions(dbname(options, "transactions")),
+    m_db_logmsg(dbname(options, "logmsg")) {
 }
 
 database_csv::~database_csv() {

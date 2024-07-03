@@ -146,9 +146,24 @@ inline void sc_process_monitor::signal(sc_thread_handle , int ) {}
 #if defined(SC_USE_MEMBER_FUNC_PTR)
 
     typedef void (sc_process_host::*SC_ENTRY_FUNC)();
+
+    template<typename T>
+    static constexpr inline auto sc_make_func_ptr(void (T::*method_p)()) noexcept {
+        // Suppress false positive warning by GCC on ARM64 about
+        // static_cast of pointer to member function of base class
+#if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wshift-negative-value"
+#endif
+        return static_cast<SC_ENTRY_FUNC>(method_p);
+#if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
+    }
+
 #   define SC_DECL_HELPER_STRUCT(callback_tag, func) /*EMPTY*/
 #   define SC_MAKE_FUNC_PTR(callback_tag, func) \
-        static_cast<sc_core::SC_ENTRY_FUNC>(&callback_tag::func)
+        sc_make_func_ptr(&callback_tag::func)
 
 
 // COMPILER NOT DOES SUPPORT CAST TO void (sc_process_host::*)() from (T::*)():

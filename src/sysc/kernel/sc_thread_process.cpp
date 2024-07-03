@@ -84,6 +84,7 @@
 // QuickThreads (32-bit, see also fixes in qt/md/{i386,iX86_64}.[hs]),
 // and MinGW32 / Cygwin32 compilers on Windows platforms
 #if defined(__GNUC__) && !defined(__ICC) && !defined(__x86_64__) && \
+    (defined(__i386__) || defined(_M_IX86)) && \
     (__GNUC__ > 4 || __GNUC__ == 4 && __GNUC_MINOR__ > 1 )
 # define SC_ALIGNED_STACK_ \
     __attribute__((force_align_arg_pointer))

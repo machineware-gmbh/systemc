@@ -71,8 +71,9 @@ sc_event::cancel()
         // remove this event from the delta events set
         m_simc->remove_delta_event( this );
         m_notify_type = NONE;
-        if (sc_is_running(m_simc))
+        if (sc_is_running(m_simc)) {
             INSCIGHT_EVENT_CANCEL(id());
+        }
         break;
     }
     case TIMED: {
@@ -81,8 +82,9 @@ sc_event::cancel()
         m_timed->m_event = 0;
         m_timed = 0;
         m_notify_type = NONE;
-        if (sc_is_running(m_simc))
+        if (sc_is_running(m_simc)) {
             INSCIGHT_EVENT_CANCEL(id());
+        }
         break;
     }
     default:

@@ -487,7 +487,7 @@ target_compile_options(
   $<$<CXX_COMPILER_ID:MSVC>:/vmg /MP>
   PRIVATE
   $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>>:
-    -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable>
+    -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -Wno-stringop-overflow>
   $<$<CXX_COMPILER_ID:MSVC>:/W3 /wd4244 /wd4267 /wd4996>)
 
 target_include_directories(systemc

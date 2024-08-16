@@ -516,10 +516,6 @@ vec_zero(int from, int ulen, sc_digit *u)
 #pragma GCC diagnostic ignored "-Warray-bounds"
 #endif
 
-#if defined(__GNUC__) && !defined(__clang__)
-#pragma GCC diagnostic ignored "-Wstringop-overflow"
-#endif
-
   for(int i = from; i < ulen; i++)
     u[i] = 0;
 

@@ -36,7 +36,7 @@
 #include <sys/mman.h> // for munmap
 
 #ifdef HAVE_VALGRIND_H
-#include <valgrind/valgrind.h>
+#include <valgrind.h>
 #endif
 
 #include "sysc/kernel/sc_cor.h"

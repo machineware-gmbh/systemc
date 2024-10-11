@@ -495,6 +495,10 @@ target_include_directories(systemc
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+if(HAVE_VALGRIND_H)
+    target_include_directories(systemc PRIVATE ${VALGRIND_H})
+endif()
+
 if (APPLE)
   # It's OK that _sc_main is an undefined symbol.
   set_target_properties (systemc PROPERTIES LINK_FLAGS -Wl,-U,_sc_main)

@@ -128,6 +128,10 @@ void database_csv::log_message(sysc_time_t st, int loglevel, const char* sender,
     m_db_logmsg << st << "," << loglevel << ",\"" << sender  << "\",\"" << message << "\"" << std::endl;
 }
 
+void database_csv::quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) {
+    m_db_quantum << st << "," << oldq << "," << newq << std::endl;
+}
+
 static const char* dbname(const std::string& options, const char* nm) {
     static char name[256];
     memset(name, 0, sizeof(name));
@@ -151,7 +155,8 @@ database_csv::database_csv(const std::string& options):
     m_db_cpuidle(dbname(options, "cpuidle")),
     m_db_cpustack(dbname(options, "cpustack")),
     m_db_transactions(dbname(options, "transactions")),
-    m_db_logmsg(dbname(options, "logmsg")) {
+    m_db_logmsg(dbname(options, "logmsg")),
+    m_db_quantum(dbname(options, "quantum")) {
 }
 
 database_csv::~database_csv() {

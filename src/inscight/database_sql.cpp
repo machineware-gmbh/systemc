@@ -121,6 +121,7 @@ void database_sql::init() {
     exec("CREATE TABLE cpustack(id BIGINT PRIMARY KEY, st BIGINT, cpu BIGINT, level INTEGER, addr BIGINT, sym TEXT NOT NULL);");
     exec("CREATE TABLE transactions(id BIGINT PRIMARY KEY, st BIGINT, dir INTEGER, port BIGINT, proto INTEGER, json TEXT NOT NULL);");
     exec("CREATE TABLE logmsg(id BIGINT PRIMARY KEY, st BIGINT, loglvl INTEGER, sender TEXT NOT NULL, msg TEXT NOT NULL);");
+    exec("CREATE TABLE quantum(id BIGINT PRIMARY KEY, st BIGINT, old_quantum BIGINT, new_quantum BIGINT);");
 }
 
 void database_sql::begin(size_t n) {
@@ -313,6 +314,13 @@ void database_sql::log_message(sysc_time_t st, int loglevel, const char* sender,
     m_stmt_insert_logmsg.execute();
 }
 
+void database_sql::quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) {
+    m_stmt_insert_quantum.bind(1, st);
+    m_stmt_insert_quantum.bind(2, oldq);
+    m_stmt_insert_quantum.bind(3, newq);
+    m_stmt_insert_quantum.execute();
+}
+
 database_sql::database_sql(const std::string& options):
     database(options),
     m_db(),
@@ -331,7 +339,8 @@ database_sql::database_sql(const std::string& options):
     m_stmt_insert_cpuidle(m_db, "INSERT INTO cpuidle (st, cpu, idle) VALUES (?1, ?2, ?3)"),
     m_stmt_insert_cpustack(m_db, "INSERT INTO cpustack (st, cpu, level, addr, sym) VALUES (?1, ?2, ?3, ?4, ?5)"),
     m_stmt_insert_transaction(m_db, "INSERT INTO transactions (st, port, dir, proto, json) VALUES (?1, ?2, ?3, ?4, ?5)"),
-    m_stmt_insert_logmsg(m_db, "INSERT INTO logmsg (st, loglvl, sender, msg) VALUES (?1, ?2, ?3, ?4)") {
+    m_stmt_insert_logmsg(m_db, "INSERT INTO logmsg (st, loglvl, sender, msg) VALUES (?1, ?2, ?3, ?4)"),
+    m_stmt_insert_quantum(m_db, "INSERT INTO quantum (st, old_quantum, new_quantum) VALUES (?1, ?2, ?3)") {
 }
 
 database_sql::~database_sql() {

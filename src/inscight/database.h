@@ -86,6 +86,8 @@ protected:
 
     virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) = 0;
 
+    virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) = 0;
+
 public:
     template <typename... ARGS>
     void insert(ARGS&&... args) {

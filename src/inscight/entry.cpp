@@ -16,6 +16,12 @@
 
 namespace inscight {
 
+template <>
+sysc_time_t to_picos(const sc_core::sc_time& t) {
+    static const sc_core::sc_time pico(1.0, sc_core::SC_PS);
+    return t / pico;
+}
+
 real_time_t real_time_stamp() {
     static auto start = std::chrono::steady_clock::now();
     auto delta = std::chrono::steady_clock::now() - start;
@@ -23,8 +29,7 @@ real_time_t real_time_stamp() {
 }
 
 sysc_time_t sysc_time_stamp() {
-    static const sc_core::sc_time pico(1.0, sc_core::SC_PS);
-    return sc_core::sc_time_stamp() / pico;
+    return to_picos(sc_core::sc_time_stamp());
 }
 
 const char* proc_str(proc_kind kind) {

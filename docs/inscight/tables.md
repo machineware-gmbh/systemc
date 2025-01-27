@@ -278,3 +278,16 @@ This corresponds to two callstacks:
 - main > foo > printf (recorded at 11223344ps for cpu module 13033)
 - main > memcpy (recorded at 20488000ps for cpu module 13033)
 
+----
+## Quantum Updates
+The `quantum` table holds information about changes made to the global TLM
+quantum during the simulation.
+* `st` (`BIGINT`): Simulation time stamp in picoseconds of the change
+* `old_quantum` (`BIGINT`): Quantum in picoseconds before the change
+* `new_quantum` (`BIGINT`): Quantum in picoseconds after the change
+
+Example table:
+|  st    | old_quantum | new_quantum |
+| :----: | :---------: | :---------: |
+|      0 |           0 |    10000000 |
+|   4000 |    10000000 |    25000000 |

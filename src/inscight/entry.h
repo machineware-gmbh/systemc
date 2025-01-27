@@ -26,6 +26,9 @@ typedef unsigned long long sysc_time_t;
 real_time_t real_time_stamp();
 sysc_time_t sysc_time_stamp();
 
+template <typename T>
+sysc_time_t to_picos(const T& t);
+
 enum proc_kind {
     KIND_METHOD = 0,
     KIND_THREAD,
@@ -102,6 +105,8 @@ enum entry_kind {
     TRANSACTION_TRACE_BW,
 
     LOG_MESSAGE,
+
+    QUANTUM_UPDATE,
 };
 
 struct entry {

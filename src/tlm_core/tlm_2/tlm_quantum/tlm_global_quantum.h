@@ -53,6 +53,8 @@ public:
   //
   void set(const sc_core::sc_time& t)
   {
+    if (t != m_global_quantum)
+      INSCIGHT_QUANTUM_UPDATE(m_global_quantum, t);
     m_global_quantum = t;
   }
 

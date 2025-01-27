@@ -266,6 +266,11 @@ void database::process(const entry& e) {
         free((void*)e.arg3);
         break;
 
+    case QUANTUM_UPDATE:
+        if (m_enabled)
+            quantum_update((sysc_time_t)e.arg0, (sysc_time_t)e.arg1, (sysc_time_t)e.arg2);
+        break;
+
     default:
         fprintf(stderr, "ignoring unknown database entry kind %u\n", e.kind);
         break;

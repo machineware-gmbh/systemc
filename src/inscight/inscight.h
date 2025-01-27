@@ -23,7 +23,7 @@
             ::inscight::ctx->trace(__VA_ARGS__); \
     } while (0)
 #else
-#define INSCIGHT_TRACE(...)
+#define INSCIGHT_TRACE(...) do {} while (0)
 #endif
 
 #define INSCIGHT_MODULE_CREATED(obj, name, kind) \
@@ -109,5 +109,11 @@
                    ::inscight::sysc_time_stamp(), lvl, \
                    strdup(sender ? sender : ""),       \
                    strdup(msg))
+
+#define INSCIGHT_QUANTUM_UPDATE(oldq, newq)       \
+    INSCIGHT_TRACE(::inscight::QUANTUM_UPDATE, 0, \
+                   ::inscight::sysc_time_stamp(), \
+                   ::inscight::to_picos(oldq),    \
+                   ::inscight::to_picos(newq))
 
 #endif

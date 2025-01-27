@@ -40,6 +40,7 @@ private:
     std::ofstream m_db_cpustack;
     std::ofstream m_db_transactions;
     std::ofstream m_db_logmsg;
+    std::ofstream m_db_quantum;
 
 protected:
     virtual void gen_meta(const meta_info& info) override;
@@ -75,6 +76,9 @@ protected:
     virtual void transaction_trace_bw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) override;
 
     virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) override;
+
+    virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) override;
+
 public:
     database_csv(const std::string& options);
     virtual ~database_csv();

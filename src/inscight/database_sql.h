@@ -74,6 +74,7 @@ private:
     stmt m_stmt_insert_cpustack;
     stmt m_stmt_insert_transaction;
     stmt m_stmt_insert_logmsg;
+    stmt m_stmt_insert_quantum;
 
     void exec(const std::string& cmd);
 
@@ -115,6 +116,8 @@ protected:
     virtual void transaction_trace_bw(id_t obj, sysc_time_t st, protocol_kind proto, const char* json) override;
 
     virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) override;
+
+    virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) override;
 
 public:
     database_sql(const std::string& options);

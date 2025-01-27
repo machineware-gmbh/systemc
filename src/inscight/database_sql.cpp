@@ -117,10 +117,10 @@ void database_sql::init() {
     exec("CREATE TABLE notify(id INTEGER PRIMARY KEY, rt BIGINT, event BIGINT, kind INTEGER, st BIGINT, delay BIGINT);");
     exec("CREATE TABLE updates(id INTEGER PRIMARY KEY, rt BIGINT, channel BIGINT, status INTEGER, st BIGINT);");
     exec("CREATE TABLE bindings(id INTEGER PRIMARY KEY, from_port BIGINT, to_port BIGINT, kind INTEGER, proto INTEGER);");
-    exec("CREATE TABLE cpuidle(id BIGINT PRIMARY KEY, st BIGINT, cpu BIGINT, idle INTEGER);");
-    exec("CREATE TABLE cpustack(id BIGINT PRIMARY KEY, st BIGINT, cpu BIGINT, level INTEGER, addr BIGINT, sym TEXT NOT NULL);");
-    exec("CREATE TABLE transactions(id BIGINT PRIMARY KEY, st BIGINT, dir INTEGER, port BIGINT, proto INTEGER, json TEXT NOT NULL);");
-    exec("CREATE TABLE logmsg(id BIGINT PRIMARY KEY, st BIGINT, loglvl INTEGER, sender TEXT NOT NULL, msg TEXT NOT NULL);");
+    exec("CREATE TABLE cpuidle(id INTEGER PRIMARY KEY, st BIGINT, cpu BIGINT, idle INTEGER);");
+    exec("CREATE TABLE cpustack(id INTEGER PRIMARY KEY, st BIGINT, cpu BIGINT, level INTEGER, addr BIGINT, sym TEXT NOT NULL);");
+    exec("CREATE TABLE transactions(id INTEGER PRIMARY KEY, st BIGINT, dir INTEGER, port BIGINT, proto INTEGER, json TEXT NOT NULL);");
+    exec("CREATE TABLE logmsg(id INTEGER PRIMARY KEY, st BIGINT, loglvl INTEGER, sender TEXT NOT NULL, msg TEXT NOT NULL);");
 }
 
 void database_sql::begin(size_t n) {

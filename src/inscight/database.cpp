@@ -141,10 +141,9 @@ void database::work() {
                 process(e);
 
             end(copy.size());
-        }
-
-        if (!m_running)
+        } else if (!m_running) {
             return;
+        }
     }
 }
 
@@ -269,6 +268,11 @@ void database::process(const entry& e) {
     case QUANTUM_UPDATE:
         if (m_enabled)
             quantum_update((sysc_time_t)e.arg0, (sysc_time_t)e.arg1, (sysc_time_t)e.arg2);
+        break;
+
+    case KTHREAD_EVENT:
+        if (m_enabled)
+            handle_kthread_event((real_time_t)e.arg0, (kthread_event)e.arg1);
         break;
 
     default:

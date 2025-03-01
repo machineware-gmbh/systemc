@@ -88,6 +88,8 @@ protected:
 
     virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) = 0;
 
+    virtual void handle_kthread_event(real_time_t rt, kthread_event event) = 0;
+
 public:
     template <typename... ARGS>
     void insert(ARGS&&... args) {

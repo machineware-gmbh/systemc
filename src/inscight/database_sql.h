@@ -75,6 +75,7 @@ private:
     stmt m_stmt_insert_transaction;
     stmt m_stmt_insert_logmsg;
     stmt m_stmt_insert_quantum;
+    stmt m_stmt_insert_kthread;
 
     void exec(const std::string& cmd);
 
@@ -118,6 +119,8 @@ protected:
     virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) override;
 
     virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) override;
+
+    virtual void handle_kthread_event(real_time_t rt, kthread_event event) override;
 
 public:
     database_sql(const std::string& options);

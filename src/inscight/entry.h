@@ -73,6 +73,17 @@ enum protocol_kind {
 const char* protocol_str(protocol_kind kind);
 protocol_kind protocol_from_str(const char* s);
 
+enum kthread_event {
+    KTHREAD_STARTED = 0,
+    KTHREAD_SUSPENDED,
+    KTHREAD_RESUMED,
+    KTHREAD_THROTTLED,
+    KTHREAD_UNTHROTTLED,
+    KTHREAD_EXITED,
+};
+
+const char* kthread_event_str(kthread_event event);
+
 enum entry_kind {
     MODULE_CREATED = 0,
     PROCESS_CREATED,
@@ -107,6 +118,8 @@ enum entry_kind {
     LOG_MESSAGE,
 
     QUANTUM_UPDATE,
+
+    KTHREAD_EVENT,
 };
 
 struct entry {

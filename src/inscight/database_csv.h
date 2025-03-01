@@ -41,6 +41,7 @@ private:
     std::ofstream m_db_transactions;
     std::ofstream m_db_logmsg;
     std::ofstream m_db_quantum;
+    std::ofstream m_db_kthread;
 
 protected:
     virtual void gen_meta(const meta_info& info) override;
@@ -78,6 +79,8 @@ protected:
     virtual void log_message(sysc_time_t st, int loglevel, const char* sender, const char* message) override;
 
     virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) override;
+
+    virtual void handle_kthread_event(real_time_t rt, kthread_event event) override;
 
 public:
     database_csv(const std::string& options);

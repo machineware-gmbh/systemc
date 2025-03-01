@@ -68,6 +68,8 @@ sc_elab_and_sim( int argc, char* argv[] )
     argc_orig = argc;
     argv_orig = argv;
 
+    INSCIGHT_KTHREAD_STARTED();
+
     // Copy argv into a new structure to prevent sc_main from modifying the
     // result returned from sc_argv.
     std::vector<char*> argv_copy(argc + 1, static_cast<char*>(NULL));
@@ -130,6 +132,8 @@ sc_elab_and_sim( int argc, char* argv[] )
 
         SC_REPORT_INFO( SC_ID_IEEE_1666_DEPRECATION_, ss.str().c_str() );
     }
+
+    INSCIGHT_KTHREAD_EXITED();
 
     return status;
 }

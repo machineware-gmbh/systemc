@@ -291,3 +291,28 @@ Example table:
 | :----: | :---------: | :---------: |
 |      0 |           0 |    10000000 |
 |   4000 |    10000000 |    25000000 |
+
+----
+## SystemC Thread Suspension
+The `kthread` table holds information about whenever the main SystemC thread
+gets suspended and resumed.
+* `rt` (`BIGINT`): real time stamp in nanoseconds when the event occurred
+* `event` (`INTEGER`): Event type
+    - 0: SystemC kernel thread started (occurs only once)
+    - 1: SystemC kernel thread suspended
+    - 2: SystemC kernel thread resumed
+    - 3: SystemC kernel thread throttled
+    - 4: SystemC kernel thread unthrottled
+    - 5: SystemC kernel thread exited (occurs only once, and only if simulation does not crash)
+
+Example table:
+|  rt       | event |
+| :-------: | :---: |
+|  4970210  |     0 |
+|  5110012  |     1 |
+|  6834431  |     2 |
+|  7019900  |     1 |
+|  7584343  |     2 |
+|  7601244  |     3 |
+|  7898506  |     4 |
+|  8090163  |     5 |

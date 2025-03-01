@@ -105,6 +105,25 @@ const char* protocol_str(protocol_kind kind) {
     }
 };
 
+const char* kthread_event_str(kthread_event event) {
+    switch (event) {
+    case KTHREAD_STARTED:
+        return "KTHREAD_STARTED";
+    case KTHREAD_SUSPENDED:
+        return "KTHREAD_SUSPENDED";
+    case KTHREAD_RESUMED:
+        return "KTHREAD_RESUMED";
+    case KTHREAD_THROTTLED:
+        return "KTHREAD_THROTTLED";
+    case KTHREAD_UNTHROTTLED:
+        return "KTHREAD_UNTHROTTLED";
+    case KTHREAD_EXITED:
+        return "KTHREAD_EXITED";
+    default: 
+        return "KTHREAD_UNKNOWN";
+    }
+}
+
 protocol_kind protocol_from_str(const char* s) {
     if (strstr(s, "sc_signal"))
         return PROTO_SIGNAL;

@@ -430,6 +430,7 @@ add_library (systemc sysc/communication/sc_clock.cpp
                        $<$<STREQUAL:${QT_ARCH},x86_64>:sysc/packages/qt/md/iX86_64.s>
                        $<$<STREQUAL:${QT_ARCH},i386>:sysc/packages/qt/md/i386.s>
                        $<$<STREQUAL:${QT_ARCH},aarch64>:sysc/packages/qt/md/aarch64.s>
+                       $<$<STREQUAL:${QT_ARCH},riscv64>:sysc/packages/qt/md/riscv64.s>
                        $<$<STREQUAL:${QT_ARCH},powerpc_mach>:
                          sysc/packages/qt/md/powerpc_mach.s
                          sysc/packages/qt/md/powerpc.c>

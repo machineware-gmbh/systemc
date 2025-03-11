@@ -171,6 +171,20 @@
 #  include <windows.h>
 #endif
 
+// ----------------------------------------------------------------------------
+// JHW: macro used to suppress issues when compiling with -fsanitize=undefined,
+// only clang and gcc.
+#if defined(__GNUC__) || defined(__clang__)
+#define SC_HAS_UNDEFINED_BEHAVIOR __attribute__((no_sanitize("undefined")))
+#else
+#define SC_HAS_UNDEFINED_BEHAVIOR
+#endif
+
+// ----------------------------------------------------------------------------
+// JHW: include inSCight header to make its tracing hook callbacks available
+// throughout the entire kernel
+#include "inscight/inscight.h"
+
 // $Log: sc_cmnhdr.h,v $
 // Revision 1.8  2011/08/26 20:46:09  acg
 //  Andy Goodrich: moved the modification log to the end of the file to

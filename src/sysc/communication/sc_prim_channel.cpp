@@ -89,6 +89,7 @@ void sc_prim_channel::before_end_of_elaboration()
 void
 sc_prim_channel::construction_done()
 {
+    INSCIGHT_CHANNEL_CREATED(id(), name(), kind());
     sc_hierarchy_scope scope( get_hierarchy_scope() );
     before_end_of_elaboration();
 }

@@ -40,6 +40,8 @@
 
 cmake_minimum_required(VERSION 3.8) # cxx_std_17
 
+option(INSCIGHT "Include InSCight support" ON)
+
 ###############################################################################
 # Build rules for SystemC library
 ###############################################################################
@@ -71,7 +73,8 @@ function(add_systemc_library libName scBuildDefine)
         $<$<BOOL:${ENABLE_PTHREADS}>:SC_USE_PTHREADS>
         $<$<BOOL:${OVERRIDE_DEFAULT_STACK_SIZE}>:
         SC_OVERRIDE_DEFAULT_STACK_SIZE=${OVERRIDE_DEFAULT_STACK_SIZE}>
-        $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:_LIB>)
+        $<$<AND:$<BOOL:${WIN32}>,$<BOOL:${MSVC}>>:_LIB>
+ 	$<$<BOOL:${HAVE_VALGRIND_H}>:HAVE_VALGRIND_H>)
 
     target_compile_options(
         ${libName}
@@ -80,17 +83,23 @@ function(add_systemc_library libName scBuildDefine)
         PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
           -Wall -Wextra -Wno-unused-parameter -Wno-unused-variable>
+        $<$<CXX_COMPILER_ID:GNU>:
+          -Wno-stringop-overflow>
         $<$<AND:$<COMPILE_LANGUAGE:ASM>,$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:
           -xassembler-with-cpp>
         $<$<AND:$<COMPILE_LANGUAGE:ASM>,$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>>:
           -Qunused-arguments>
-        $<$<CXX_COMPILER_ID:MSVC>:/W3 /wd4244 /wd4267 /wd4996>)
+        $<$<CXX_COMPILER_ID:MSVC>: /W3 /wd4244 /wd4267 /wd4996>)
 
     target_include_directories(
         ${libName}
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+    if(HAVE_VALGRIND_H)
+      target_include_directories(${libName} PRIVATE ${VALGRIND_H})
+    endif()
 
     if (APPLE)
       # sc_main is OK to be undefined
@@ -124,7 +133,34 @@ function(add_systemc_library libName scBuildDefine)
         SOVERSION ${SystemCLanguage_SOVERSION}
         )
 
+###############################################################################
+# Extra settings for inSCight support
+###############################################################################
+    if(INSCIGHT)
+      message(STATUS "Enable InSCight support")
+      target_sources(${libName} PRIVATE inscight/inscight.h)
+      target_sources(${libName} PRIVATE inscight/entry.h)
+      target_sources(${libName} PRIVATE inscight/entry.cpp)
+      target_sources(${libName} PRIVATE inscight/database.h)
+      target_sources(${libName} PRIVATE inscight/database.cpp)
+      target_sources(${libName} PRIVATE inscight/database_csv.h)
+      target_sources(${libName} PRIVATE inscight/database_csv.cpp)
+      target_sources(${libName} PRIVATE inscight/database_sql.h)
+      target_sources(${libName} PRIVATE inscight/database_sql.cpp)
+      target_sources(${libName} PRIVATE inscight/context.h)
+      target_sources(${libName} PRIVATE inscight/context.cpp)
+      target_sources(${libName} PRIVATE inscight/sqlite/sqlite3.c)
+      target_sources(${libName} PRIVATE inscight/sqlite/sqlite3.h)
+      target_sources(${libName} PRIVATE inscight/sqlite/sqlite3ext.h)
+      target_compile_definitions(${libName} PUBLIC HAVE_INSCIGHT)
+      target_link_libraries(${libName} PUBLIC ${CMAKE_DL_LIBS})
+      target_compile_features(${libName} PUBLIC cxx_std_11)
+    endif()
+
 endfunction(add_systemc_library)
+
+# Fix to make stack non-executable (done automatically for c/c++, but not asm)
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -Wa,--noexecstack")
 
 set(SYSTEMC_CORE_SRC
         systemc sysc/communication/sc_clock.cpp
@@ -415,6 +451,7 @@ set(SYSTEMC_CORE_SRC
           $<$<STREQUAL:${QT_ARCH},x86_64>:sysc/packages/qt/md/iX86_64.s>
           $<$<STREQUAL:${QT_ARCH},i386>:sysc/packages/qt/md/i386.s>
           $<$<STREQUAL:${QT_ARCH},aarch64>:sysc/packages/qt/md/aarch64.s>
+          $<$<STREQUAL:${QT_ARCH},riscv64>:sysc/packages/qt/md/riscv64.s>
           $<$<STREQUAL:${QT_ARCH},multi>:sysc/packages/qt/md/multi.s>
           sysc/packages/qt/md/aarch64.h
           sysc/packages/qt/md/i386.h

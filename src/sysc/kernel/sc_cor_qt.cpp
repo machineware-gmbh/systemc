@@ -227,6 +227,7 @@ sc_cor_pkg_qt::~sc_cor_pkg_qt()
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-function-type"
+#pragma GCC diagnostic ignored "-Warray-bounds"
 extern "C"
 void
 sc_cor_qt_wrapper( void* arg, void* cor, qt_userf_t* fn )

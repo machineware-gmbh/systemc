@@ -135,11 +135,11 @@ template<typename T>
 static constexpr inline sc_core::sc_entry_func sc_make_func_ptr(void (T::*method_p)()) noexcept {
     // Suppress false positive warning by GCC on ARM64 about
     // static_cast of pointer to member function of base class
-#if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
+#if (defined(__aarch64__) || defined(__i386__)) && defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshift-negative-value"
 #endif
-    return static_cast<sc_entry_func>(method_p);
+    return static_cast<sc_core::sc_entry_func>(method_p);
 #if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic pop
 #endif

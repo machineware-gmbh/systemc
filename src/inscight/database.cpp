@@ -20,6 +20,7 @@
 
 #if defined(__linux__)
 #include <unistd.h>
+#include<limits.h>
 #include <signal.h>
 
 static std::string progpath() {

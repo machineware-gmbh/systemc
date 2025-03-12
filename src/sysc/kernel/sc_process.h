@@ -132,7 +132,7 @@ inline void sc_process_monitor::signal(sc_thread_handle , int ) {}
 typedef void (sc_process_host::*sc_entry_func)();
 
 template<typename T>
-static constexpr inline SC_ENTRY_FUNC sc_make_func_ptr(void (T::*method_p)()) noexcept {
+static constexpr inline sc_core::sc_entry_func sc_make_func_ptr(void (T::*method_p)()) noexcept {
     // Suppress false positive warning by GCC on ARM64 about
     // static_cast of pointer to member function of base class
 #if defined(__aarch64__) && defined(__GNUC__) && !defined(__clang__)

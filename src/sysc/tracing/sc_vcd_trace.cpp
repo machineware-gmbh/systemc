@@ -84,6 +84,10 @@
 # pragma warning(disable:4309) // truncation of constant value
 #endif
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wformat-overflow"
+#endif
+
 namespace sc_core {
 
 using sc_dt::sc_max;

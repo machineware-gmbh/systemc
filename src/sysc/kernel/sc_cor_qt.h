@@ -33,6 +33,10 @@
 
 #if !defined(_WIN32) && !defined(WIN32) && !defined(WIN64)  && !defined(SC_USE_PTHREADS)
 
+#ifdef HAVE_VALGRIND_H
+#include <valgrind.h>
+#endif
+
 #include "sysc/kernel/sc_cor.h"
 #include "sysc/packages/qt/qt.h"
 
@@ -71,6 +75,9 @@ public:
 
     sc_cor_pkg_qt* m_pkg = nullptr;    // the creating coroutine package
 
+#ifdef HAVE_VALGRIND_H
+    unsigned int   m_vgid = 0;		// valgrind stack id
+#endif
 private:
 };
 

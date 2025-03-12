@@ -165,7 +165,8 @@
 #
 ###############################################################################
 
-cmake_minimum_required (VERSION 3.5)
+
+cmake_minimum_required (VERSION 3.8)
 cmake_policy(SET CMP0001 NEW)
 
 project (SystemCLanguage CXX C)
@@ -249,20 +250,20 @@ if(PROJECT_IS_TOP_LEVEL AND NOT WIN32)
   set(CMAKE_CONFIGURATION_TYPES Release Debug RelWithDebInfo ${SYSTEMC_SANITIZER_CONFIGURATION_TYPES})
 endif()
 
-if(NOT CMAKE_BUILD_TYPE AND NOT GENERATOR_IS_MULTI_CONFIG)
-  set (CMAKE_BUILD_TYPE Release CACHE STRING
-       "Choose the type of build, options are: empty, ${CMAKE_CONFIGURATION_TYPES}."
-       FORCE)
-endif()
+#if(NOT CMAKE_BUILD_TYPE AND NOT GENERATOR_IS_MULTI_CONFIG)
+#  set (CMAKE_BUILD_TYPE Release CACHE STRING
+#       "Choose the type of build, options are: empty, ${CMAKE_CONFIGURATION_TYPES}."
+#       FORCE)
+#endif()
 
-if (NOT (WIN32 OR CYGWIN))
-  option (BUILD_SHARED_LIBS "Build shared libraries." ON)
-else (NOT (WIN32 OR CYGWIN))
-  option (BUILD_SHARED_LIBS "Build shared libraries." OFF)
-endif (NOT (WIN32 OR CYGWIN))
-if (BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-endif(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
+#if (NOT (WIN32 OR CYGWIN))
+#  option (BUILD_SHARED_LIBS "Build shared libraries." ON)
+#else (NOT (WIN32 OR CYGWIN))
+#  option (BUILD_SHARED_LIBS "Build shared libraries." OFF)
+#endif (NOT (WIN32 OR CYGWIN))
+#if (BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
+#  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#endif(BUILD_SHARED_LIBS AND (WIN32 OR CYGWIN))
 
 option (BUILD_SOURCE_DOCUMENTATION "Build source documentation with Doxygen." OFF)
 
@@ -313,7 +314,7 @@ mark_as_advanced(DISABLE_COPYRIGHT_MESSAGE
 # Set SystemC_TARGET_ARCH depending on OS and processor type
 ###############################################################################
 
-message (STATUS "Checking OS and processor type.")
+#message (STATUS "Checking OS and processor type.")
 
 if (APPLE)
   list (LENGTH CMAKE_OSX_ARCHITECTURES N_OSX_ARCHITECTURES)
@@ -326,11 +327,13 @@ if (APPLE)
   endif()
 endif (APPLE)
 
-include (CheckSymbolExists)
-check_symbol_exists (__x86_64__ "" HAS__x86_64__DEFINED)
-check_symbol_exists (__i386 "" HAS__i386_DEFINED)
-check_symbol_exists (__aarch64__ "" HAS__aarch64__DEFINED)
-
+if (CMAKE_SYSTEM_PROCESSOR MATCHES x86_64)
+  set(HAS__x86_64__DEFINED TRUE CACHE BOOL "Building for x86_64 system")
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES i386)
+  set(HAS__i386_DEFINED TRUE CACHE BOOL "Building for i386 system")
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES aarch64|arm64)
+  set(HAS__aarch64__DEFINED TRUE CACHE BOOL "Building for Aarch64 system")
+endif ()
 
 # Set SystemC_TARGET_ARCH according to the detected
 # OS/processor/compiler platform
@@ -405,7 +408,7 @@ endif (NOT SystemC_TARGET_ARCH)
 ###############################################################################
 
 # Set QuickThreads architecture based on the detected preprocessor symbols.
-message (STATUS "Detect the target processor architecture for QuickThreads.")
+#message (STATUS "Detect the target processor architecture for QuickThreads.")
 if (ENABLE_PTHREADS)
   set (QT_ARCH "IGNORE") # Pthreads will be used for the SystemC coroutines.
 elseif (MSVC)
@@ -494,6 +497,10 @@ elseif (INSTALL_TO_LIB_TARGET_ARCH_DIR)
 endif (INSTALL_TO_LIB_BUILD_TYPE_DIR)
 include (GNUInstallDirs)
 
+# JHW: enforce fixed include and library directory names for installation
+set (CMAKE_INSTALL_INCLUDEDIR "include")
+set (CMAKE_INSTALL_LIBDIR "lib")
+
 # Install symlink lib-<target-arch> to lib-${CMAKE_BUILD_TYPE}
 if (INSTALL_LIB_TARGET_ARCH_SYMLINK AND CMAKE_HOST_UNIX)
   install (CODE "
@@ -578,57 +585,80 @@ endif ("${isSystemDir}" STREQUAL "-1")
 
 
 ###############################################################################
+# Look for valgrind
+###############################################################################
+find_path(VALGRIND_H NAMES valgrind.h PATH_SUFFIXES valgrind)
+if (EXISTS ${VALGRIND_H})
+    set(HAVE_VALGRIND_H TRUE)
+endif()
+
+###############################################################################
 # Configure status
 ###############################################################################
 
-message (STATUS "========================================================================")
-message (STATUS "Settings to build SystemC ${SystemCLanguage_VERSION} (${SystemCLanguage_VERSION_RELEASE_DATE}) and TLM ${SystemCTLM_VERSION} (${SystemCTLM_VERSION_RELEASE_DATE})")
-message (STATUS "------------------------------------------------------------------------")
-message (STATUS "BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}")
-message (STATUS "BUILD_SOURCE_DOCUMENTATION = ${BUILD_SOURCE_DOCUMENTATION}")
-message (STATUS "ENABLE_EXAMPLES = ${ENABLE_EXAMPLES}")
-message (STATUS "ENABLE_REGRESSION = ${ENABLE_REGRESSION}")
-if (NOT GENERATOR_IS_MULTI_CONFIG)
-  message (STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
-endif()
-message (STATUS "DISABLE_COPYRIGHT_MESSAGE = ${DISABLE_COPYRIGHT_MESSAGE}")
-message (STATUS "DISABLE_VCD_SCOPES = ${DISABLE_VCD_SCOPES}")
-message (STATUS "ENABLE_ASSERTIONS = ${ENABLE_ASSERTIONS}")
+#message (STATUS "========================================================================")
+#message (STATUS "Settings to build SystemC ${SystemCLanguage_VERSION} (${SystemCLanguage_VERSION_RELEASE_DATE}) and TLM ${SystemCTLM_VERSION} (${SystemCTLM_VERSION_RELEASE_DATE})")
+#message (STATUS "------------------------------------------------------------------------")
+#message (STATUS "BUILD_SHARED_LIBS = ${BUILD_SHARED_LIBS}")
+#message (STATUS "BUILD_SOURCE_DOCUMENTATION = ${BUILD_SOURCE_DOCUMENTATION}")
+#message (STATUS "ENABLE_EXAMPLES = ${ENABLE_EXAMPLES}")
+#message (STATUS "ENABLE_REGRESSION = ${ENABLE_REGRESSION}")
+#if (NOT GENERATOR_IS_MULTI_CONFIG)
+#  message (STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+#endif()
+if (DISABLE_COPYRIGHT_MESSAGE)
+  message (STATUS "Disable copyright message")
+else (DISABLE_COPYRIGHT_MESSAGE)
+  message (STATUS "Enable copyright message")
+endif (DISABLE_COPYRIGHT_MESSAGE)
+if (DISABLE_VCD_SCOPES)
+  message (STATUS "Disable VCD scopes")
+else (DISABLE_VCD_SCOPES)
+  message (STATUS "Enable VCD scopes")
+endif (DISABLE_VCD_SCOPES)
+if (ENABLE_ASSERTIONS)
+  message (STATUS "Enable SystemC assertions")
+else (ENABLE_ASSERTIONS)
+  message (STATUS "Disable SystemC assertions")
+endif (ENABLE_ASSERTIONS)
 if (ENABLE_PTHREADS)
-  message ("ENABLE_PTHREADS = ${ENABLE_PTHREADS}")
+  message (STATUS "Enable pthreads")
 else (ENABLE_PTHREADS)
-  message (STATUS "ENABLE_PTHREADS = ${ENABLE_PTHREADS}")
+  message (STATUS "Disable pthreads")
 endif (ENABLE_PTHREADS)
 if (OVERRIDE_DEFAULT_STACK_SIZE GREATER 0)
-  message (STATUS "OVERRIDE_DEFAULT_STACK_SIZE = ${OVERRIDE_DEFAULT_STACK_SIZE}")
+  message ("Override default stack size ${OVERRIDE_DEFAULT_STACK_SIZE}")
 endif (OVERRIDE_DEFAULT_STACK_SIZE GREATER 0)
-message (STATUS "SystemC_TARGET_ARCH = ${SystemC_TARGET_ARCH}")
-message (STATUS "SystemCLanguage_VERSION = ${SystemCLanguage_VERSION}")
-message (STATUS "SystemCTLM_VERSION = ${SystemCTLM_VERSION}")
-message (STATUS "INSTALL_TO_LIB_BUILD_TYPE_DIR = ${INSTALL_TO_LIB_BUILD_TYPE_DIR}")
-message (STATUS "INSTALL_TO_LIB_TARGET_ARCH_DIR = ${INSTALL_TO_LIB_TARGET_ARCH_DIR}")
-message (STATUS "INSTALL_LIB_TARGET_ARCH_SYMLINK = ${INSTALL_LIB_TARGET_ARCH_SYMLINK}")
-message (STATUS "------------------------------------------------------------------------")
-message (STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
-message (STATUS "CMAKE_SYSTEM_PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
-message (STATUS "QT_ARCH = ${QT_ARCH}")
-if (DEFINED CMAKE_OSX_ARCHITECTURES)
-  message (STATUS "CMAKE_OSX_ARCHITECTURES = ${CMAKE_OSX_ARCHITECTURES}")
-endif (DEFINED CMAKE_OSX_ARCHITECTURES)
-if (DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
-  message (STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}")
-endif (DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
-if (DEFINED CMAKE_OSX_SYSROOT)
-  message (STATUS "CMAKE_OSX_SYSROOT = ${CMAKE_OSX_SYSROOT}")
-endif(DEFINED CMAKE_OSX_SYSROOT)
-message (STATUS "------------------------------------------------------------------------")
-message (STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
-message (STATUS "CMAKE_INSTALL_BINDIR = ${CMAKE_INSTALL_BINDIR}")
-message (STATUS "CMAKE_INSTALL_DOCDIR = ${CMAKE_INSTALL_DOCDIR}")
-message (STATUS "CMAKE_INSTALL_INCLUDEDIR = ${CMAKE_INSTALL_INCLUDEDIR}")
-message (STATUS "CMAKE_INSTALL_LIBDIR = ${CMAKE_INSTALL_LIBDIR}")
-message (STATUS "INSTALL_CMAKEDIR = ${INSTALL_CMAKEDIR}")
-message (STATUS "========================================================================")
+if (HAVE_VALGRIND_H)
+  message (STATUS "Enable valgrind support")
+endif (HAVE_VALGRIND_H)
+message (STATUS "SystemC target arch ${SystemC_TARGET_ARCH}")
+message (STATUS "SystemC language version ${SystemCLanguage_VERSION}")
+message (STATUS "SystemC TLM version ${SystemCTLM_VERSION}")
+#message (STATUS "INSTALL_TO_LIB_BUILD_TYPE_DIR = ${INSTALL_TO_LIB_BUILD_TYPE_DIR}")
+#message (STATUS "INSTALL_TO_LIB_TARGET_ARCH_DIR = ${INSTALL_TO_LIB_TARGET_ARCH_DIR}")
+#message (STATUS "INSTALL_LIB_TARGET_ARCH_SYMLINK = ${INSTALL_LIB_TARGET_ARCH_SYMLINK}")
+#message (STATUS "------------------------------------------------------------------------")
+#message (STATUS "CMAKE_SYSTEM = ${CMAKE_SYSTEM}")
+#message (STATUS "CMAKE_SYSTEM_PROCESSOR = ${CMAKE_SYSTEM_PROCESSOR}")
+#message (STATUS "QT_ARCH = ${QT_ARCH}")
+#if (DEFINED CMAKE_OSX_ARCHITECTURES)
+#  message (STATUS "CMAKE_OSX_ARCHITECTURES = ${CMAKE_OSX_ARCHITECTURES}")
+#endif (DEFINED CMAKE_OSX_ARCHITECTURES)
+#if (DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+#  message (STATUS "CMAKE_OSX_DEPLOYMENT_TARGET = ${CMAKE_OSX_DEPLOYMENT_TARGET}")
+#endif (DEFINED CMAKE_OSX_DEPLOYMENT_TARGET)
+#if (DEFINED CMAKE_OSX_SYSROOT)
+#  message (STATUS "CMAKE_OSX_SYSROOT = ${CMAKE_OSX_SYSROOT}")
+#endif(DEFINED CMAKE_OSX_SYSROOT)
+#message (STATUS "------------------------------------------------------------------------")
+#message (STATUS "CMAKE_INSTALL_PREFIX = ${CMAKE_INSTALL_PREFIX}")
+#message (STATUS "CMAKE_INSTALL_BINDIR = ${CMAKE_INSTALL_BINDIR}")
+#message (STATUS "CMAKE_INSTALL_DOCDIR = ${CMAKE_INSTALL_DOCDIR}")
+#message (STATUS "CMAKE_INSTALL_INCLUDEDIR = ${CMAKE_INSTALL_INCLUDEDIR}")
+#message (STATUS "CMAKE_INSTALL_LIBDIR = ${CMAKE_INSTALL_LIBDIR}")
+#message (STATUS "INSTALL_CMAKEDIR = ${INSTALL_CMAKEDIR}")
+#message (STATUS "========================================================================")
 
 ###############################################################################
 # Subdirectories
@@ -636,65 +666,65 @@ message (STATUS "===============================================================
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 add_subdirectory (src)
-add_subdirectory (docs)
-add_subdirectory (examples)
-add_subdirectory (tests)
+# add_subdirectory (docs)
+# add_subdirectory (examples)
+# add_subdirectory (tests)
 
 ###############################################################################
 # Install README files
 ###############################################################################
 
-install (FILES AUTHORS.md
-               INSTALL.md
-               cmake/INSTALL_USING_CMAKE.md
-               LICENSE
-               NOTICE
-               README.md
-               RELEASENOTES.md
-         DESTINATION ${CMAKE_INSTALL_DOCDIR}
-         COMPONENT doc)
+# install (FILES AUTHORS.md
+#                INSTALL.md
+#                cmake/INSTALL_USING_CMAKE.md
+#                LICENSE
+#                NOTICE
+#                README.md
+#                RELEASENOTES.md
+#          DESTINATION ${CMAKE_INSTALL_DOCDIR}
+#          COMPONENT doc)
 
 
 ###############################################################################
 # Provide package of the SystemC library to other programs using CMake
 ###############################################################################
 
-# Export the systemc library target for usage by other programs to installation tree
-install (EXPORT SystemCLanguageTargets
-         NAMESPACE SystemC::
-         DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
-         COMPONENT dev)
+#  Export the systemc library target for usage by other programs to installation tree
+# install (EXPORT SystemCLanguageTargets
+#         NAMESPACE SystemC::
+#          DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR}
+#          COMPONENT dev)
 
 # Register the SystemCLanguage and SystemCTLM packages for use from the
 # build tree. (This registers the build tree with the global CMake-registry.)
-export (PACKAGE SystemCLanguage)
-export (PACKAGE SystemCTLM)
+# export (PACKAGE SystemCLanguage)
+# export (PACKAGE SystemCTLM)
 
 # Create the <Package>Config.cmake and <Package>ConfigVersion files
-include(CMakePackageConfigHelpers)
-configure_package_config_file(cmake/SystemCLanguageConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfig.cmake
-  INSTALL_DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR})
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
-  VERSION ${SystemCLanguage_VERSION_MAJOR}.${SystemCLanguage_VERSION_MINOR}.${SystemCLanguage_VERSION_PATCH}.${SystemCLanguage_VERSION_RELEASE_DATE}
-  COMPATIBILITY AnyNewerVersion
-)
-configure_package_config_file(cmake/SystemCTLMConfig.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfig.cmake
-  INSTALL_DESTINATION ${SystemCTLM_INSTALL_CMAKEDIR})
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
-  VERSION ${SystemCTLM_VERSION_MAJOR}.${SystemCTLM_VERSION_MINOR}.${SystemCTLM_VERSION_PATCH}.${SystemCTLM_VERSION_RELEASE_DATE}
-  COMPATIBILITY AnyNewerVersion
-)
+# include(CMakePackageConfigHelpers)
+# configure_package_config_file(cmake/SystemCLanguageConfig.cmake.in
+#   ${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfig.cmake
+#   INSTALL_DESTINATION ${SystemCLanguage_INSTALL_CMAKEDIR})
+# write_basic_package_version_file(
+#   "${CMAKE_CURRENT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
+#   VERSION ${SystemCLanguage_VERSION_MAJOR}.${SystemCLanguage_VERSION_MINOR}.${SystemCLanguage_VERSION_PATCH}.${SystemCLanguage_VERSION_RELEASE_DATE}
+#   COMPATIBILITY AnyNewerVersion
+# )
+# configure_package_config_file(cmake/SystemCTLMConfig.cmake.in
+#  ${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfig.cmake
+#   INSTALL_DESTINATION ${SystemCTLM_INSTALL_CMAKEDIR})
+# write_basic_package_version_file(
+#   "${CMAKE_CURRENT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
+#   VERSION ${SystemCTLM_VERSION_MAJOR}.${SystemCTLM_VERSION_MINOR}.${SystemCTLM_VERSION_PATCH}.${SystemCTLM_VERSION_RELEASE_DATE}
+#   COMPATIBILITY AnyNewerVersion
+# )
 
 # Install the <Package>Config.cmake and <Package>ConfigVersion.cmake
-install(FILES "${PROJECT_BINARY_DIR}/SystemCLanguageConfig.cmake"
-              "${PROJECT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
-        DESTINATION "${SystemCLanguage_INSTALL_CMAKEDIR}"
-        COMPONENT dev)
-install(FILES "${PROJECT_BINARY_DIR}/SystemCTLMConfig.cmake"
-              "${PROJECT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
-        DESTINATION "${SystemCTLM_INSTALL_CMAKEDIR}"
-        COMPONENT dev)
+# install(FILES "${PROJECT_BINARY_DIR}/SystemCLanguageConfig.cmake"
+#               "${PROJECT_BINARY_DIR}/SystemCLanguageConfigVersion.cmake"
+#         DESTINATION "${SystemCLanguage_INSTALL_CMAKEDIR}"
+#         COMPONENT dev)
+# install(FILES "${PROJECT_BINARY_DIR}/SystemCTLMConfig.cmake"
+#               "${PROJECT_BINARY_DIR}/SystemCTLMConfigVersion.cmake"
+#         DESTINATION "${SystemCTLM_INSTALL_CMAKEDIR}"
+#         COMPONENT dev)

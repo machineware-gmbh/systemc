@@ -86,6 +86,11 @@ sc_cor_qt::~sc_cor_qt()
     if (SC_UNLIKELY_(this == m_pkg->get_main())) {
         return; // don't delete main stack
     }
+
+#ifdef HAVE_VALGRIND_H
+        VALGRIND_STACK_DEREGISTER(m_vgid);
+#endif
+
     if ( m_stack ) {
         ::munmap( m_stack, m_stack_size );
     }
@@ -220,6 +225,9 @@ sc_cor_pkg_qt::~sc_cor_pkg_qt()
 
 // create a new coroutine
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+#pragma GCC diagnostic ignored "-Warray-bounds"
 extern "C"
 void
 sc_cor_qt_wrapper( void* arg, void* cor, qt_userf_t* fn )
@@ -230,7 +238,10 @@ sc_cor_qt_wrapper( void* arg, void* cor, qt_userf_t* fn )
     (*(sc_cor_fn*) fn)( arg );
     // not reached
 }
+#pragma GCC diagnostic pop
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wcast-function-type"
 sc_cor*
 sc_cor_pkg_qt::create( std::size_t stack_size, sc_cor_fn* fn, void* arg )
 {
@@ -245,11 +256,16 @@ sc_cor_pkg_qt::create( std::size_t stack_size, sc_cor_fn* fn, void* arg )
                        , "failed to allocate stack memory" );
         sc_abort();
     }
+
+#ifdef HAVE_VALGRIND_H
+    cor->m_vgid = VALGRIND_STACK_REGISTER(cor->m_stack, (char*)cor->m_stack + cor->m_stack_size - 1);
+#endif
     cor->m_sp = QUICKTHREADS_SP( aligned_sp, cor->m_stack_size );
     cor->m_sp = QUICKTHREADS_ARGS( cor->m_sp, arg, cor, (qt_userf_t*) fn,
                                    sc_cor_qt_wrapper );
     return cor;
 }
+#pragma GCC diagnostic pop
 
 
 // yield to the next coroutine

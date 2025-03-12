@@ -67,6 +67,9 @@ sc_event::cancel()
         // remove this event from the delta events set
         m_simc->remove_delta_event( this );
         m_notify_type = NONE;
+        if (sc_is_running(m_simc)) {
+            INSCIGHT_EVENT_CANCEL(id());
+        }
         break;
     }
     case TIMED: {
@@ -75,6 +78,9 @@ sc_event::cancel()
         m_timed->m_event = 0;
         m_timed = 0;
         m_notify_type = NONE;
+        if (sc_is_running(m_simc)) {
+            INSCIGHT_EVENT_CANCEL(id());
+        }
         break;
     }
     default:
@@ -97,6 +103,7 @@ sc_event::notify()
         return;
     }
     cancel();
+    INSCIGHT_EVENT_NOTIFY_IMMEDIATE(id());
     trigger();
 }
 
@@ -126,6 +133,7 @@ sc_event::notify( const sc_time& t )
         // add this event to the delta events set
         m_delta_event_index = m_simc->add_delta_event( this );
         m_notify_type = DELTA;
+        INSCIGHT_EVENT_NOTIFY_DELTA(id());
         return;
     }
     if( SC_UNLIKELY_( m_simc->get_stage() ) )
@@ -152,6 +160,7 @@ sc_event::notify( const sc_time& t )
     m_simc->add_timed_event( et );
     m_timed = et;
     m_notify_type = TIMED;
+    INSCIGHT_EVENT_NOTIFY_TIMED(id(), t);
 }
 
 static void sc_warn_notify_delayed()
@@ -175,6 +184,7 @@ sc_event::notify_delayed()
     // add this event to the delta events set
     m_delta_event_index = m_simc->add_delta_event( this );
     m_notify_type = DELTA;
+    INSCIGHT_EVENT_NOTIFY_DELTA(id());
 }
 
 void
@@ -188,6 +198,7 @@ sc_event::notify_delayed( const sc_time& t )
         // add this event to the delta events set
         m_delta_event_index = m_simc->add_delta_event( this );
         m_notify_type = DELTA;
+        INSCIGHT_EVENT_NOTIFY_DELTA(id());
     } else {
         // add this event to the timed events set
         sc_event_timed* et = new sc_event_timed( this,
@@ -195,6 +206,7 @@ sc_event::notify_delayed( const sc_time& t )
         m_simc->add_timed_event( et );
         m_timed = et;
         m_notify_type = TIMED;
+        INSCIGHT_EVENT_NOTIFY_TIMED(id(), t);
     }
 }
 
@@ -289,6 +301,7 @@ sc_event::sc_event( const char* name )
   , m_parent_with_hierarchy_flag(NULL)
 {
     register_event( name );
+    INSCIGHT_EVENT_CREATED(id(), this->name());
 }
 
 // +----------------------------------------------------------------------------
@@ -312,6 +325,7 @@ sc_event::sc_event()
   , m_parent_with_hierarchy_flag(NULL)
 {
     register_event( NULL );
+    INSCIGHT_EVENT_CREATED(id(), name());
 }
 
 // +----------------------------------------------------------------------------
@@ -335,6 +349,7 @@ sc_event::sc_event( kernel_tag, const char* name )
   , m_parent_with_hierarchy_flag(NULL)
 {
     register_event( name, /* is_kernel_event = */ true );
+    INSCIGHT_EVENT_CREATED(id(), this->name());
 }
 
 // +----------------------------------------------------------------------------

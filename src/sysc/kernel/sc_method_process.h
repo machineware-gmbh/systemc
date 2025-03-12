@@ -280,9 +280,10 @@ void sc_method_process::set_next_runnable(sc_method_handle next_p)
     m_runnable_p = next_p;
 }
 
-inline
+inline SC_HAS_UNDEFINED_BEHAVIOR
 sc_method_handle sc_method_process::next_runnable()
 {
+    // JHW: this cast triggers UBSAN if m_runnable_p is SC_NO_METHODS
     return (sc_method_handle)m_runnable_p;
 }
 
@@ -295,6 +296,8 @@ sc_method_handle sc_method_process::next_runnable()
 // +----------------------------------------------------------------------------
 inline bool sc_method_process::run_process()
 {
+    INSCIGHT_PROCESS_START(id());
+
     // Execute this object instance's semantics and catch any exceptions that
     // are generated:
 
@@ -313,10 +316,12 @@ inline bool sc_method_process::run_process()
         catch( ... ) {
             sc_report* err_p = sc_handle_exception();
             simcontext()->set_error( err_p );
+            INSCIGHT_PROCESS_YIELD(id());
             return false;
         }
     } while( restart );
 
+    INSCIGHT_PROCESS_YIELD(id());
     return true;
 }
 

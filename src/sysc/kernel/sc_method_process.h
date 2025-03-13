@@ -274,7 +274,7 @@ sc_method_handle sc_method_process::next_exist()
 }
 
 
-inline
+inline SC_HAS_UNDEFINED_BEHAVIOR
 void sc_method_process::set_next_runnable(sc_method_handle next_p)
 {
     m_runnable_p = next_p;

@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: [20.04, 22.04]
+        version: [20.04, 22.04, 24.04]
         platform: [linux/amd64, linux/arm64]
         target: [gcc-shared-regression, clang-shared-regression]
     steps:

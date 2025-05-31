@@ -316,3 +316,27 @@ Example table:
 |  7601244  |     3 |
 |  7898506  |     4 |
 |  8090163  |     5 |
+
+----
+## Interrupt Tracing
+The `irq` table holds information about interrupts received by interrupt
+controllers and processors throughout the simulation.
+* `rt` (`BIGINT`) real time stamp in nanoseconds when the event occurred
+* `st` (`BIGINT`) simulation time stamp in picoseconds when the event occurred
+* `irqchip` (`BIGINT`) globally unique identifier for the recipient controller
+* `irqid` (`INTEGER`) interrupt id within the interrupt domain of the controller
+* `event` (`INTEGER`) status of the corresponding interrupt
+    - 0: level-triggered irq changed its level to low
+    - 1: level-triggered irq changed its level to high
+    - 2: edge-triggered irq observed a falling edge
+    - 3: edge-triggered irq observed a rising edge
+    - 4: a message-signaled interrupt (MSI) was received from the bus
+
+Example table:
+|  rt       |  st       | irqchip | irqid | event |
+| :-------: | :-------: | :-----: | :---: | :---: |
+|  4870430  |    10000  |  40343  |     9 |     1 |
+|  5011112  |    11000  |  40343  |     9 |     0 |
+|  6432431  |    20000  |  40343  |    14 |     1 |
+|  7148800  |    21000  |  40343  |    14 |     0 |
+|  7594222  |    56000  |  98550  |  1055 |     4 |

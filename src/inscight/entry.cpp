@@ -125,7 +125,24 @@ const char* kthread_event_str(kthread_event event) {
         return "KTHREAD_UNTHROTTLED";
     case KTHREAD_EXITED:
         return "KTHREAD_EXITED";
-    default: 
+    default:
+        return "KTHREAD_UNKNOWN";
+    }
+}
+
+const char* irq_event_str(irq_event event) {
+    switch (event) {
+    case IRQ_LEVEL_LO:
+        return "IRQ_LEVEL_LO";
+    case IRQ_LEVEL_HI:
+        return "IRQ_LEVEL_HI";
+    case IRQ_EDGE_FALL:
+        return "IRQ_EDGE_FALL";
+    case IRQ_EDGE_RISE:
+        return "IRQ_EDGE_RISE";
+    case IRQ_MSI:
+        return "IRQ_MSI";
+    default:
         return "KTHREAD_UNKNOWN";
     }
 }

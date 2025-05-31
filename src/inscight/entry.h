@@ -90,6 +90,16 @@ enum kthread_event {
 
 const char* kthread_event_str(kthread_event event);
 
+enum irq_event {
+    IRQ_LEVEL_LO = 0,
+    IRQ_LEVEL_HI,
+    IRQ_EDGE_FALL,
+    IRQ_EDGE_RISE,
+    IRQ_MSI,
+};
+
+const char* irq_event_str(irq_event event);
+
 enum entry_kind {
     MODULE_CREATED = 0,
     PROCESS_CREATED,
@@ -126,6 +136,8 @@ enum entry_kind {
     QUANTUM_UPDATE,
 
     KTHREAD_EVENT,
+
+    IRQ_EVENT,
 };
 
 struct entry {

@@ -129,6 +129,7 @@ void database_sql::init() {
     exec("CREATE TABLE logmsg(id INTEGER PRIMARY KEY, st BIGINT, loglvl INTEGER, sender TEXT NOT NULL, msg TEXT NOT NULL);");
     exec("CREATE TABLE quantum(id INTEGER PRIMARY KEY, st BIGINT, old_quantum BIGINT, new_quantum BIGINT);");
     exec("CREATE TABLE kthread(id INTEGER PRIMARY KEY, rt BIGINT, event INTEGER);");
+    exec("CREATE TABLE irq(id INTEGER PRIMARY KEY, rt BIGINT, st BIGINT, irqchip BIGINT, irqid INTEGER, event INTEGER);");
 }
 
 void database_sql::begin(size_t n) {
@@ -334,6 +335,15 @@ void database_sql::handle_kthread_event(real_time_t rt, kthread_event event) {
     m_stmt_insert_kthread.execute();
 }
 
+void database_sql::handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) {
+    m_stmt_insert_irq.bind(1, rt);
+    m_stmt_insert_irq.bind(2, st);
+    m_stmt_insert_irq.bind(3, obj);
+    m_stmt_insert_irq.bind(4, irqid);
+    m_stmt_insert_irq.bind(5, event);
+    m_stmt_insert_irq.execute();
+}
+
 database_sql::database_sql(const std::string& options):
     database(options),
     m_db(),
@@ -354,7 +364,8 @@ database_sql::database_sql(const std::string& options):
     m_stmt_insert_transaction(m_db, "INSERT INTO transactions (st, port, dir, proto, json) VALUES (?1, ?2, ?3, ?4, ?5)"),
     m_stmt_insert_logmsg(m_db, "INSERT INTO logmsg (st, loglvl, sender, msg) VALUES (?1, ?2, ?3, ?4)"),
     m_stmt_insert_quantum(m_db, "INSERT INTO quantum (st, old_quantum, new_quantum) VALUES (?1, ?2, ?3)"),
-    m_stmt_insert_kthread(m_db, "INSERT INTO kthread (rt, event) VALUES (?1, ?2)") {
+    m_stmt_insert_kthread(m_db, "INSERT INTO kthread (rt, event) VALUES (?1, ?2)"),
+    m_stmt_insert_irq(m_db, "INSERT INTO irq (rt, st, irqchip, irqid, event) VALUES (?1, ?2, ?3, ?4, ?5)") {
 }
 
 database_sql::~database_sql() {

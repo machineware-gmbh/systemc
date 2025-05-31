@@ -281,6 +281,11 @@ void database::process(const entry& e) {
             handle_kthread_event((real_time_t)e.arg0, (kthread_event)e.arg1);
         break;
 
+    case IRQ_EVENT:
+        if (m_enabled)
+            handle_irq_event(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1, e.arg2, (irq_event)e.arg3);
+        break;
+
     default:
         fprintf(stderr, "ignoring unknown database entry kind %u\n", e.kind);
         break;

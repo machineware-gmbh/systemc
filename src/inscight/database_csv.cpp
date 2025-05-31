@@ -142,6 +142,10 @@ void database_csv::handle_kthread_event(real_time_t rt, kthread_event event) {
     m_db_kthread << rt << "," << kthread_event_str(event) << std::endl;
 }
 
+void database_csv::handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) {
+    m_db_irq << rt << "," << st << ",irq" << irqid << "," << irq_event_str(event) << std::endl;
+}
+
 static const char* dbname(const std::string& options, const char* nm) {
     static char name[256];
     memset(name, 0, sizeof(name));
@@ -167,7 +171,8 @@ database_csv::database_csv(const std::string& options):
     m_db_transactions(dbname(options, "transactions")),
     m_db_logmsg(dbname(options, "logmsg")),
     m_db_quantum(dbname(options, "quantum")),
-    m_db_kthread(dbname(options, "kthread")) {
+    m_db_kthread(dbname(options, "kthread")),
+    m_db_irq(dbname(options, "irq")) {
 }
 
 database_csv::~database_csv() {

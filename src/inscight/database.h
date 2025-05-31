@@ -96,6 +96,8 @@ protected:
 
     virtual void handle_kthread_event(real_time_t rt, kthread_event event) = 0;
 
+    virtual void handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) = 0;
+
 public:
     template <typename... ARGS>
     void insert(ARGS&&... args) {

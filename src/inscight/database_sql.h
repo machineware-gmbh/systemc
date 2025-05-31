@@ -82,6 +82,7 @@ private:
     stmt m_stmt_insert_logmsg;
     stmt m_stmt_insert_quantum;
     stmt m_stmt_insert_kthread;
+    stmt m_stmt_insert_irq;
 
     void exec(const std::string& cmd);
 
@@ -127,6 +128,8 @@ protected:
     virtual void quantum_update(sysc_time_t st, sysc_time_t oldq, sysc_time_t newq) override;
 
     virtual void handle_kthread_event(real_time_t rt, kthread_event event) override;
+
+    virtual void handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) override;
 
 public:
     database_sql(const std::string& options);

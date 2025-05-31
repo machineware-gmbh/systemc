@@ -122,23 +122,35 @@
                    ::inscight::to_picos(oldq),    \
                    ::inscight::to_picos(newq))
 
-#define INSCIGHT_KTHREAD_STARTED()                                            \
-    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, inscight::real_time_stamp(), \
+#define INSCIGHT_KTHREAD_STARTED()                                              \
+    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, ::inscight::real_time_stamp(), \
                    ::inscight::KTHREAD_STARTED)
-#define INSCIGHT_KTHREAD_SUSPENDED()                                          \
-    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, inscight::real_time_stamp(), \
+#define INSCIGHT_KTHREAD_SUSPENDED()                                            \
+    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, ::inscight::real_time_stamp(), \
                    ::inscight::KTHREAD_SUSPENDED)
-#define INSCIGHT_KTHREAD_RESUMED()                                            \
-    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, inscight::real_time_stamp(), \
+#define INSCIGHT_KTHREAD_RESUMED()                                              \
+    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, ::inscight::real_time_stamp(), \
                    ::inscight::KTHREAD_RESUMED)
-#define INSCIGHT_KTHREAD_THROTTLED()                                          \
-    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, inscight::real_time_stamp(), \
+#define INSCIGHT_KTHREAD_THROTTLED()                                            \
+    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, ::inscight::real_time_stamp(), \
                    ::inscight::KTHREAD_THROTTLED)
-#define INSCIGHT_KTHREAD_UNTHROTTLED()                                        \
-    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, inscight::real_time_stamp(), \
+#define INSCIGHT_KTHREAD_UNTHROTTLED()                                          \
+    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, ::inscight::real_time_stamp(), \
                    ::inscight::KTHREAD_UNTHROTTLED)
-#define INSCIGHT_KTHREAD_EXITED()                                             \
-    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, inscight::real_time_stamp(), \
+#define INSCIGHT_KTHREAD_EXITED()                                               \
+    INSCIGHT_TRACE(::inscight::KTHREAD_EVENT, 0, ::inscight::real_time_stamp(), \
                    ::inscight::KTHREAD_EXITED)
+
+#define INSCIGHT_IRQ_LEVEL(obj, irqid, state)                                   \
+    INSCIGHT_TRACE(::inscight::IRQ_EVENT, obj, inscight::real_time_stamp(),     \
+                   ::inscight::sysc_time_stamp(), irqid,                        \
+                   state ? ::inscight::IRQ_LEVEL_HI : ::inscight::IRQ_LEVEL_LO)
+#define INSCIGHT_IRQ_EDGE(obj, irqid, state)                                    \
+    INSCIGHT_TRACE(::inscight::IRQ_EVENT, obj, inscight::real_time_stamp(),     \
+                   ::inscight::sysc_time_stamp(), irqid,                        \
+                   state ? ::inscight::IRQ_EDGE_RISE : ::inscight::IRQ_EDGE_FALL)
+#define INSCIGHT_IRQ_MSI(obj, irqid)                                            \
+    INSCIGHT_TRACE(::inscight::IRQ_EVENT, obj, inscight::real_time_stamp(),     \
+                   ::inscight::sysc_time_stamp(), irqid, ::inscight::IRQ_MSI)
 
 #endif

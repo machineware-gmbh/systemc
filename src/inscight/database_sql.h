@@ -83,6 +83,7 @@ private:
     stmt m_stmt_insert_quantum;
     stmt m_stmt_insert_kthread;
     stmt m_stmt_insert_irq;
+    stmt m_stmt_insert_btransport;
 
     void exec(const std::string& cmd);
 
@@ -130,6 +131,9 @@ protected:
     virtual void handle_kthread_event(real_time_t rt, kthread_event event) override;
 
     virtual void handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) override;
+
+    virtual void handle_btransport_fw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) override;
+    virtual void handle_btransport_bw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) override;
 
 public:
     database_sql(const std::string& options);

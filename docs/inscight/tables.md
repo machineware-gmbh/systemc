@@ -340,3 +340,28 @@ Example table:
 |  6432431  |    20000  |  40343  |    14 |     1 |
 |  7148800  |    21000  |  40343  |    14 |     0 |
 |  7594222  |    56000  |  98550  |  1055 |     4 |
+
+----
+## Blocking Transport
+The `btransport` table holds information about blocking transport calls.
+* `port` (`BIGINT`) id of the port that is handling the transaction
+* `payload` (`BIGINT`) id of the payload that is used in the transaction
+* `rt` (`BIGINT`) real time stamp in nanoseconds when the transaction occured
+* `st` (`BIGINT`) simulation time stamp in nanoseconds when the transaction occured
+* `dir` (`BIGINT`) direction
+    - 0: on the way from the initiator to the target (fw)
+    - 1: on the way from the target back to the initiator (bw)
+
+Example table:
+| port            | payload  | rt        | st         | dir |
+| :-------------: | :------: | :-------: | :--------: | :-: |
+| 19635696        | 20116240 | 468828742 | 0          | 0   |
+| 140737488285856 | 20116240 | 468836315 | 0          | 0   |
+| 140737488285856 | 20116240 | 468855278 | 0          | 1   |
+| 19635696        | 20116240 | 468856189 | 0          | 1   |
+| 19635696        | 20116240 | 530868129 | 1400045000 | 0   |
+| 19670016        | 20116240 | 530883734 | 1400045000 | 0   |
+| 140737488017656 | 20116240 | 530885910 | 1400045000 | 0   |
+| 140737488017656 | 20116240 | 530921388 | 1449360000 | 1   |
+| 19670016        | 20116240 | 530922519 | 1449360000 | 1   |
+| 19635696        | 20116240 | 530923322 | 1449360000 | 1   |

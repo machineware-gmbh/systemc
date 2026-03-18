@@ -110,6 +110,17 @@
     INSCIGHT_TRACE(::inscight::TRANSACTION_TRACE_BW, (obj).id(), \
                    t, proto, strdup(txjson))
 
+#define INSCIGHT_BTRANSPORT_FW(port, payload)                    \
+    INSCIGHT_TRACE(::inscight::BTRANSPORT_FW, (port).id(),       \
+                   reinterpret_cast<::inscight::id_t>(&payload), \
+                   ::inscight::real_time_stamp(),                \
+                   ::inscight::sysc_time_stamp());
+#define INSCIGHT_BTRANSPORT_BW(port, payload)                    \
+    INSCIGHT_TRACE(::inscight::BTRANSPORT_BW, (port).id(),       \
+                   reinterpret_cast<::inscight::id_t>(&payload), \
+                   ::inscight::real_time_stamp(),                \
+                   ::inscight::sysc_time_stamp());
+
 #define INSCIGHT_LOG_MESSAGE(lvl, sender, msg)         \
     INSCIGHT_TRACE(::inscight::LOG_MESSAGE, 0,         \
                    ::inscight::sysc_time_stamp(), lvl, \

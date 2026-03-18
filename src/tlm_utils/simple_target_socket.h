@@ -300,7 +300,9 @@ private:
       if (m_b_transport_ptr) {
         // forward call
         sc_assert(m_mod);
+        INSCIGHT_BTRANSPORT_FW(m_owner->get_base_port(), trans);
         (m_mod->*m_b_transport_ptr)(trans, t);
+        INSCIGHT_BTRANSPORT_BW(m_owner->get_base_port(), trans);
         return;
       }
 

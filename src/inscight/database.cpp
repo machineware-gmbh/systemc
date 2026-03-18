@@ -287,6 +287,16 @@ void database::process(const entry& e) {
             handle_irq_event(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1, e.arg2, (irq_event)e.arg3);
         break;
 
+    case BTRANSPORT_FW:
+        if (m_enabled)
+            handle_btransport_fw(e.id, (id_t) e.arg0,  (real_time_t)e.arg1, (sysc_time_t)e.arg2);
+        break;
+
+    case BTRANSPORT_BW:
+        if (m_enabled)
+            handle_btransport_bw(e.id, (id_t) e.arg0,  (real_time_t)e.arg1, (sysc_time_t)e.arg2);
+        break;
+
     default:
         fprintf(stderr, "ignoring unknown database entry kind %u\n", e.kind);
         break;

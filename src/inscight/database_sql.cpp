@@ -130,6 +130,7 @@ void database_sql::init() {
     exec("CREATE TABLE quantum(id INTEGER PRIMARY KEY, st BIGINT, old_quantum BIGINT, new_quantum BIGINT);");
     exec("CREATE TABLE kthread(id INTEGER PRIMARY KEY, rt BIGINT, event INTEGER);");
     exec("CREATE TABLE irq(id INTEGER PRIMARY KEY, rt BIGINT, st BIGINT, irqchip BIGINT, irqid INTEGER, event INTEGER);");
+    exec("CREATE TABLE btransport(id INTEGER PRIMARY KEY, port BIGINT, payload BIGINT, rt BIGINT, st BIGINT, dir INTEGER);");
 }
 
 void database_sql::begin(size_t n) {
@@ -344,6 +345,25 @@ void database_sql::handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, si
     m_stmt_insert_irq.execute();
 }
 
+void database_sql::handle_btransport_fw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) {
+    m_stmt_insert_btransport.bind(1, port);
+    m_stmt_insert_btransport.bind(2, payload);
+    m_stmt_insert_btransport.bind(3, rt);
+    m_stmt_insert_btransport.bind(4, st);
+    m_stmt_insert_btransport.bind(5, 0ull);
+    m_stmt_insert_btransport.execute();
+}
+
+void database_sql::handle_btransport_bw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) {
+    m_stmt_insert_btransport.bind(1, port);
+    m_stmt_insert_btransport.bind(2, payload);
+    m_stmt_insert_btransport.bind(3, rt);
+    m_stmt_insert_btransport.bind(4, st);
+    m_stmt_insert_btransport.bind(5, 1ull);
+    m_stmt_insert_btransport.execute();
+}
+
+
 database_sql::database_sql(const std::string& options):
     database(options),
     m_db(),
@@ -365,7 +385,8 @@ database_sql::database_sql(const std::string& options):
     m_stmt_insert_logmsg(m_db, "INSERT INTO logmsg (st, loglvl, sender, msg) VALUES (?1, ?2, ?3, ?4)"),
     m_stmt_insert_quantum(m_db, "INSERT INTO quantum (st, old_quantum, new_quantum) VALUES (?1, ?2, ?3)"),
     m_stmt_insert_kthread(m_db, "INSERT INTO kthread (rt, event) VALUES (?1, ?2)"),
-    m_stmt_insert_irq(m_db, "INSERT INTO irq (rt, st, irqchip, irqid, event) VALUES (?1, ?2, ?3, ?4, ?5)") {
+    m_stmt_insert_irq(m_db, "INSERT INTO irq (rt, st, irqchip, irqid, event) VALUES (?1, ?2, ?3, ?4, ?5)"),
+    m_stmt_insert_btransport(m_db, "INSERT INTO btransport (port, payload, rt, st, dir) VALUES (?1, ?2, ?3, ?4, ?5)") {
 }
 
 database_sql::~database_sql() {

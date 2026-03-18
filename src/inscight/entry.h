@@ -138,6 +138,9 @@ enum entry_kind {
     KTHREAD_EVENT,
 
     IRQ_EVENT,
+
+    BTRANSPORT_FW,
+    BTRANSPORT_BW,
 };
 
 struct entry {

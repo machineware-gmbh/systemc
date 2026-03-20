@@ -241,6 +241,18 @@ public:
   {
     return "tlm_target_socket";
   }
+
+  using base_socket_type::get_base_port;
+
+  using base_socket_type::bind;
+  virtual void bind(typename base_socket_type::fw_interface_type& ifs) override
+  {
+    m_tracing_fw_transport_if = std::make_unique<tlm_tracing_fw_transport_if<TYPES>>(ifs, get_base_port().id());
+    base_socket_type::bind(*m_tracing_fw_transport_if);
+  }
+
+private:
+  std::unique_ptr<tlm_tracing_fw_transport_if<TYPES>> m_tracing_fw_transport_if;
 };
 
 } // namespace tlm

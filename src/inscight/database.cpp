@@ -289,12 +289,12 @@ void database::process(const entry& e) {
 
     case BTRANSPORT_FW:
         if (m_enabled)
-            handle_btransport_fw(e.id, (id_t) e.arg0,  (real_time_t)e.arg1, (sysc_time_t)e.arg2);
+            handle_btransport_fw(e.id, (id_t) e.arg0,  e.arg1, (real_time_t)e.arg2, (sysc_time_t)e.arg3);
         break;
 
     case BTRANSPORT_BW:
         if (m_enabled)
-            handle_btransport_bw(e.id, (id_t) e.arg0,  (real_time_t)e.arg1, (sysc_time_t)e.arg2);
+            handle_btransport_bw(e.id, (id_t) e.arg0,  e.arg1, (real_time_t)e.arg2, (sysc_time_t)e.arg3);
         break;
 
     default:

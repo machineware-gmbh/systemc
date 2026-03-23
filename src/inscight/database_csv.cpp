@@ -146,12 +146,12 @@ void database_csv::handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, si
     m_db_irq << rt << "," << st << ",irq" << irqid << "," << irq_event_str(event) << std::endl;
 }
 
-void database_csv::handle_btransport_fw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) {
-    m_db_btransport << port << "," << payload << "," << rt << "," << st << "," << 0 << std::endl;
+void database_csv::handle_btransport_fw(id_t port, id_t payload, id_t thread, real_time_t rt, sysc_time_t st) {
+    m_db_btransport << port << "," << payload << "," << thread << "," << rt << "," << st << "," << 0 << std::endl;
 }
 
-void database_csv::handle_btransport_bw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) {
-    m_db_btransport << port << "," << payload << "," << rt << "," << st << "," << 1 << std::endl;
+void database_csv::handle_btransport_bw(id_t port, id_t payload, id_t thread, real_time_t rt, sysc_time_t st) {
+    m_db_btransport << port << "," << payload << "," << thread << "," << rt << "," << st << "," << 1 << std::endl;
 }
 
 static const char* dbname(const std::string& options, const char* nm) {

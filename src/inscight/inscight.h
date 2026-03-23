@@ -113,11 +113,13 @@
 #define INSCIGHT_BTRANSPORT_FW(port, payload)                    \
     INSCIGHT_TRACE(::inscight::BTRANSPORT_FW, port,              \
                    reinterpret_cast<::inscight::id_t>(&payload), \
+                   sc_core::sc_get_current_process_b()->id(),    \
                    ::inscight::real_time_stamp(),                \
                    ::inscight::sysc_time_stamp());
 #define INSCIGHT_BTRANSPORT_BW(port, payload)                    \
     INSCIGHT_TRACE(::inscight::BTRANSPORT_BW, port,              \
                    reinterpret_cast<::inscight::id_t>(&payload), \
+                   sc_core::sc_get_current_process_b()->id(),    \
                    ::inscight::real_time_stamp(),                \
                    ::inscight::sysc_time_stamp());
 

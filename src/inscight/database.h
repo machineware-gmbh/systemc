@@ -98,8 +98,8 @@ protected:
 
     virtual void handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) = 0;
 
-    virtual void handle_btransport_fw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) = 0;
-    virtual void handle_btransport_bw(id_t port, id_t payload, real_time_t rt, sysc_time_t st) = 0;
+    virtual void handle_btransport_fw(id_t port, id_t payload, id_t thread, real_time_t rt, sysc_time_t st) = 0;
+    virtual void handle_btransport_bw(id_t port, id_t payload, id_t thread, real_time_t rt, sysc_time_t st) = 0;
 
 public:
     template <typename... ARGS>

@@ -346,6 +346,7 @@ Example table:
 The `btransport` table holds information about blocking transport calls.
 * `port` (`BIGINT`) id of the port that is handling the transaction
 * `payload` (`BIGINT`) id of the payload that is used in the transaction
+* `proc` (`BIGINT`) id of the currently active SC_THREAD
 * `rt` (`BIGINT`) real time stamp in nanoseconds when the transaction occured
 * `st` (`BIGINT`) simulation time stamp in nanoseconds when the transaction occured
 * `dir` (`BIGINT`) direction
@@ -353,15 +354,15 @@ The `btransport` table holds information about blocking transport calls.
     - 1: on the way from the target back to the initiator (bw)
 
 Example table:
-| port            | payload  | rt        | st         | dir |
-| :-------------: | :------: | :-------: | :--------: | :-: |
-| 19635696        | 20116240 | 468828742 | 0          | 0   |
-| 140737488285856 | 20116240 | 468836315 | 0          | 0   |
-| 140737488285856 | 20116240 | 468855278 | 0          | 1   |
-| 19635696        | 20116240 | 468856189 | 0          | 1   |
-| 19635696        | 20116240 | 530868129 | 1400045000 | 0   |
-| 19670016        | 20116240 | 530883734 | 1400045000 | 0   |
-| 140737488017656 | 20116240 | 530885910 | 1400045000 | 0   |
-| 140737488017656 | 20116240 | 530921388 | 1449360000 | 1   |
-| 19670016        | 20116240 | 530922519 | 1449360000 | 1   |
-| 19635696        | 20116240 | 530923322 | 1449360000 | 1   |
+| port            | payload  | proc     | rt        | st         | dir |
+| :-------------: | :------: | :------: | :-------: | :--------: | :-: |
+| 19635696        | 20116240 | 19569968 | 468828742 | 0          | 0   |
+| 140737488285856 | 20116240 | 19569968 | 468836315 | 0          | 0   |
+| 140737488285856 | 20116240 | 19569968 | 468855278 | 0          | 1   |
+| 19635696        | 20116240 | 19569968 | 468856189 | 0          | 1   |
+| 19635696        | 20116240 | 19569968 | 530868129 | 1400045000 | 0   |
+| 19670016        | 20116240 | 19569968 | 530883734 | 1400045000 | 0   |
+| 140737488017656 | 20116240 | 19569968 | 530885910 | 1400045000 | 0   |
+| 140737488017656 | 20116240 | 19569968 | 530921388 | 1449360000 | 1   |
+| 19670016        | 20116240 | 19569968 | 530922519 | 1449360000 | 1   |
+| 19635696        | 20116240 | 19569968 | 530923322 | 1449360000 | 1   |

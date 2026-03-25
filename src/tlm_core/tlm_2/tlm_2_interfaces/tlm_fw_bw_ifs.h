@@ -214,8 +214,15 @@ public:
 };
 
 // The forward interface with inscight support:
+class tlm_tracing_fw_transport_if_b {
+public:
+  virtual ~tlm_tracing_fw_transport_if_b() = default;
+};
+
 template<typename TYPES = tlm::tlm_base_protocol_types>
-class tlm_tracing_fw_transport_if : public tlm::tlm_fw_transport_if<TYPES>
+class tlm_tracing_fw_transport_if
+  : public tlm_tracing_fw_transport_if_b
+  , public tlm::tlm_fw_transport_if<TYPES>
 {
 public:
   tlm_tracing_fw_transport_if(tlm::tlm_fw_transport_if<TYPES>& inner, ::inscight::id_t owner_id)

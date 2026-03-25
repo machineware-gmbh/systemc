@@ -55,7 +55,7 @@ sc_cthread_process::sc_cthread_process( const char* name_p,
 {
     m_dont_init = true;
     m_process_kind = SC_CTHREAD_PROC_;
-    INSCIGHT_PROCESS_CREATED(id(), name(), inscight::KIND_CTHREAD);
+    INSCIGHT_PROCESS_CREATED(id(), name(), inscight::KIND_CTHREAD, get_parent_object()->id());
 }
 
 //------------------------------------------------------------------------------

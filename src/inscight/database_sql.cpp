@@ -114,8 +114,8 @@ void database_sql::init() {
 
     exec("CREATE TABLE meta(pid BIGINT PRIMARY KEY, path STRING, user STRING, version STRING, time DATETIME);");
     exec("CREATE TABLE modules(id BIGINT PRIMARY KEY, name STRING, kind STRING);");
-    exec("CREATE TABLE processes(id BIGINT PRIMARY KEY, name STRING, kind INTEGER);");
-    exec("CREATE TABLE ports(id BIGINT PRIMARY KEY, name STRING);");
+    exec("CREATE TABLE processes(id BIGINT PRIMARY KEY, name STRING, kind INTEGER, parent BIGINT);");
+    exec("CREATE TABLE ports(id BIGINT PRIMARY KEY, name STRING, parent BIGINT);");
     exec("CREATE TABLE events(id BIGINT PRIMARY KEY, name STRING);");
     exec("CREATE TABLE channels(id BIGINT PRIMARY KEY, name STRING, kind STRING);");
     exec("CREATE TABLE elab(id INTEGER PRIMARY KEY, rt BIGINT, module BIGINT, phase INTEGER, status INTEGER);");
@@ -156,16 +156,18 @@ void database_sql::module_created(id_t obj, const char* name, const char* kind) 
     m_stmt_insert_module.execute();
 }
 
-void database_sql::process_created(id_t obj, const char* name, proc_kind kind) {
+void database_sql::process_created(id_t obj, const char* name, proc_kind kind, id_t parent) {
     m_stmt_insert_process.bind(1, obj);
     m_stmt_insert_process.bind(2, name);
     m_stmt_insert_process.bind(3, (int)kind);
+    m_stmt_insert_process.bind(4, parent);
     m_stmt_insert_process.execute();
 }
 
-void database_sql::port_created(id_t obj, const char* name) {
+void database_sql::port_created(id_t obj, const char* name, id_t parent) {
     m_stmt_insert_port.bind(1, obj);
     m_stmt_insert_port.bind(2, name);
+    m_stmt_insert_port.bind(3, parent);
     m_stmt_insert_port.execute();
 }
 
@@ -372,8 +374,8 @@ database_sql::database_sql(const std::string& options):
     m_stmt_tx_begin(m_db, "BEGIN IMMEDIATE TRANSACTION;"),
     m_stmt_tx_end(m_db, "END TRANSACTION;"),
     m_stmt_insert_module(m_db, "INSERT INTO modules (id, name, kind) VALUES (?1, ?2, ?3)"),
-    m_stmt_insert_process(m_db, "INSERT INTO processes (id, name, kind) VALUES (?1, ?2, ?3)"),
-    m_stmt_insert_port(m_db, "INSERT INTO ports (id, name) VALUES (?1, ?2)"),
+    m_stmt_insert_process(m_db, "INSERT INTO processes (id, name, kind, parent) VALUES (?1, ?2, ?3, ?4)"),
+    m_stmt_insert_port(m_db, "INSERT INTO ports (id, name, parent) VALUES (?1, ?2, ?3)"),
     m_stmt_insert_event(m_db, "INSERT INTO events (id, name) VALUES (?1, ?2)"),
     m_stmt_insert_channel(m_db, "INSERT INTO channels (id, name, kind) VALUES (?1, ?2, ?3)"),
     m_stmt_insert_elab(m_db, "INSERT INTO elab (rt, module, phase, status) VALUES (?1, ?2, ?3, ?4)"),

@@ -163,12 +163,12 @@ void database::process(const entry& e) {
         break;
 
     case PROCESS_CREATED:
-        process_created(e.id, (const char*)e.arg0, (proc_kind)e.arg1);
+        process_created(e.id, (const char*)e.arg0, (proc_kind)e.arg1, (id_t) e.arg2);
         free((void*)e.arg0);
         break;
 
     case PORT_CREATED:
-        port_created(e.id, (const char*)e.arg0);
+        port_created(e.id, (const char*)e.arg0, (id_t) e.arg1);
         free((void*)e.arg0);
         break;
 

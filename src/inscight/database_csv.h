@@ -55,8 +55,8 @@ protected:
     virtual void gen_meta(const meta_info& info) override;
 
     virtual void module_created(id_t obj, const char* name, const char* kind) override;
-    virtual void process_created(id_t obj, const char* name, proc_kind kind) override;
-    virtual void port_created(id_t obj, const char* name) override;
+    virtual void process_created(id_t obj, const char* name, proc_kind kind, id_t parent) override;
+    virtual void port_created(id_t obj, const char* name, id_t parent) override;
     virtual void event_created(id_t obj, const char* name) override;
     virtual void channel_created(id_t obj, const char* name, const char* kind) override;
 

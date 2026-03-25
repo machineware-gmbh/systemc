@@ -50,12 +50,12 @@ void database_csv::module_created(id_t obj, const char* nm, const char* kind) {
     m_db_modules << obj << "," << escape(nm) << "," << escape(kind) << std::endl;
 }
 
-void database_csv::process_created(id_t obj, const char* nm, proc_kind kind) {
-    m_db_processes << obj << "," << escape(nm) << "," << proc_kind(kind) << std::endl;
+void database_csv::process_created(id_t obj, const char* nm, proc_kind kind, id_t parent) {
+    m_db_processes << obj << "," << escape(nm) << "," << proc_kind(kind) << "," << parent << std::endl;
 }
 
-void database_csv::port_created(id_t obj, const char* name) {
-    m_db_ports << obj << "," << escape(name) << std::endl;
+void database_csv::port_created(id_t obj, const char* name, id_t parent) {
+    m_db_ports << obj << "," << escape(name) << "," << parent << std::endl;
 }
 
 void database_csv::event_created(id_t obj, const char* name) {

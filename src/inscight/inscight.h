@@ -34,12 +34,12 @@
 
 #define INSCIGHT_MODULE_CREATED(obj, name, kind) \
     INSCIGHT_TRACE(::inscight::MODULE_CREATED, obj, strdup(name), strdup(kind))
-#define INSCIGHT_PROCESS_CREATED(obj, name, kind) \
-    INSCIGHT_TRACE(::inscight::PROCESS_CREATED, obj, strdup(name), kind)
+#define INSCIGHT_PROCESS_CREATED(obj, name, kind, parent) \
+    INSCIGHT_TRACE(::inscight::PROCESS_CREATED, obj, strdup(name), kind, parent)
 #define INSCIGHT_EVENT_CREATED(obj, name) \
     INSCIGHT_TRACE(::inscight::EVENT_CREATED, obj, strdup(name))
-#define INSCIGHT_PORT_CREATED(obj, name) \
-    INSCIGHT_TRACE(::inscight::PORT_CREATED, obj, strdup(name))
+#define INSCIGHT_PORT_CREATED(obj, name, parent) \
+    INSCIGHT_TRACE(::inscight::PORT_CREATED, obj, strdup(name), parent)
 #define INSCIGHT_CHANNEL_CREATED(obj, name, kind)                  \
     INSCIGHT_TRACE(::inscight::CHANNEL_CREATED, obj, strdup(name), \
                    strdup(kind))

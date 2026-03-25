@@ -61,8 +61,8 @@ protected:
     virtual void gen_meta(const meta_info& info) = 0;
 
     virtual void module_created(id_t obj, const char* name, const char* kind) = 0;
-    virtual void process_created(id_t obj, const char* name, proc_kind kind) = 0;
-    virtual void port_created(id_t obj, const char* name) = 0;
+    virtual void process_created(id_t obj, const char* name, proc_kind kind, id_t parent) = 0;
+    virtual void port_created(id_t obj, const char* name, id_t parent) = 0;
     virtual void event_created(id_t obj, const char* name) = 0;
     virtual void channel_created(id_t obj, const char* name, const char* kind) = 0;
 

@@ -213,46 +213,6 @@ public:
   typedef TYPES protocol_types;
 };
 
-// The forward interface with inscight support:
-class tlm_tracing_fw_transport_if_b {
-public:
-  virtual ~tlm_tracing_fw_transport_if_b() = default;
-};
-
-template<typename TYPES = tlm::tlm_base_protocol_types>
-class tlm_tracing_fw_transport_if
-  : public tlm_tracing_fw_transport_if_b
-  , public tlm::tlm_fw_transport_if<TYPES>
-{
-public:
-  tlm_tracing_fw_transport_if(tlm::tlm_fw_transport_if<TYPES>& inner, ::inscight::id_t owner_id)
-    : m_inner(inner), m_owner_id(owner_id) {}
-
-  void b_transport(typename TYPES::tlm_payload_type& trans, sc_core::sc_time& t) override {
-    INSCIGHT_BTRANSPORT_FW(m_owner_id, trans);
-    m_inner.b_transport(trans, t);
-    INSCIGHT_BTRANSPORT_BW(m_owner_id, trans);
-  }
-
-  tlm_sync_enum nb_transport_fw(typename TYPES::tlm_payload_type& trans,
-                                typename TYPES::tlm_phase_type& phase,
-                                sc_core::sc_time& t) override {
-    return m_inner.nb_transport_fw(trans, phase, t);
-  }
-
-  bool get_direct_mem_ptr(typename TYPES::tlm_payload_type& trans, tlm_dmi&  dmi_data){
-    return m_inner.get_direct_mem_ptr(trans, dmi_data);
-  }
-
-  unsigned int transport_dbg(typename TYPES::tlm_payload_type& trans) {
-    return m_inner.transport_dbg(trans);
-  }
-
-private:
-  tlm_fw_transport_if<TYPES>& m_inner;
-  ::inscight::id_t m_owner_id;
-};
-
 // The backward interface:
 template <typename TYPES = tlm_base_protocol_types>
 class tlm_bw_transport_if

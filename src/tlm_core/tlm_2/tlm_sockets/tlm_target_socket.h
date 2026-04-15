@@ -24,9 +24,8 @@
 #include "tlm_core/tlm_2/tlm_2_interfaces/tlm_fw_bw_ifs.h"
 
 #ifdef HAVE_INSCIGHT
-#include "inscight/storage.h"
+#include "inscight/tracing_ifs.h"
 #endif
-
 
 namespace tlm {
 
@@ -247,17 +246,19 @@ public:
   }
 
   using base_socket_type::get_base_port;
-
   using base_socket_type::bind;
 
 #ifdef HAVE_INSCIGHT
+  virtual ~tlm_target_socket()
+  {
+    inscight::fw_transport_if_b::remove(get_base_port().id());
+  }
+
   virtual void bind(typename base_socket_type::fw_interface_type& ifs) override
   {
-    auto* wrapper = new tlm_tracing_fw_transport_if<TYPES>(ifs, get_base_port().id());
+    auto* wrapper = new inscight::fw_transport_if<TYPES>(ifs, get_base_port().id());
 
     base_socket_type::bind(*wrapper);
-    ::inscight::tlm_tracing_fw_transport_if[this] =
-      std::unique_ptr<tlm_tracing_fw_transport_if_b>(static_cast<tlm_tracing_fw_transport_if_b*>(wrapper));
   }
 #endif
 };

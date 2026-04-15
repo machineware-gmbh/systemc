@@ -1,3 +1,4 @@
+
 /******************************************************************************
  *                                                                            *
  * Copyright (C) 2022-2026 MachineWare GmbH                                   *
@@ -15,10 +16,25 @@
  *                                                                            *
  ******************************************************************************/
 
-#include "inscight/storage.h"
+#include "inscight/tracing_ifs.h"
 
 namespace inscight {
 
-std::unordered_map<void*, tlm_tracing_fw_transport_if_ptr> tlm_tracing_fw_transport_if;
+std::unordered_map<id_t, fw_transport_if_b*> ifs;
+
+fw_transport_if_b::fw_transport_if_b(id_t owner): owner(owner) {
+    if (ifs.count(owner))
+        delete ifs[owner];
+    ifs[owner] = this;
+}
+
+fw_transport_if_b::~fw_transport_if_b() {
+    ifs.erase(owner);
+}
+
+void fw_transport_if_b::remove(id_t owner) {
+    if (ifs.count(owner))
+        delete ifs[owner];
+}
 
 } // namespace inscight

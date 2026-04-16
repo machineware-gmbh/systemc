@@ -38,7 +38,7 @@ protected:
     id_t owner;
 
 private:
-    static std::unordered_map<id_t, fw_transport_if_b*> m_ifs;
+    static std::unordered_map<id_t, fw_transport_if_b*> ifs;
 };
 
 template <typename TYPES = tlm::tlm_base_protocol_types>

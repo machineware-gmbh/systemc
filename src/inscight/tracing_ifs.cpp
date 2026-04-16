@@ -20,7 +20,7 @@
 
 namespace inscight {
 
-std::unordered_map<id_t, fw_transport_if_b*> ifs;
+std::unordered_map<id_t, fw_transport_if_b*> fw_transport_if_b::ifs;
 
 fw_transport_if_b::fw_transport_if_b(id_t owner): owner(owner) {
     if (ifs.count(owner))

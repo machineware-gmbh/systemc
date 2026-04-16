@@ -49,13 +49,14 @@ private:
     std::ofstream m_db_quantum;
     std::ofstream m_db_kthread;
     std::ofstream m_db_irq;
+    std::ofstream m_db_btransport;
 
 protected:
     virtual void gen_meta(const meta_info& info) override;
 
     virtual void module_created(id_t obj, const char* name, const char* kind) override;
-    virtual void process_created(id_t obj, const char* name, proc_kind kind) override;
-    virtual void port_created(id_t obj, const char* name) override;
+    virtual void process_created(id_t obj, const char* name, proc_kind kind, id_t parent) override;
+    virtual void port_created(id_t obj, const char* name, id_t parent) override;
     virtual void event_created(id_t obj, const char* name) override;
     virtual void channel_created(id_t obj, const char* name, const char* kind) override;
 
@@ -90,6 +91,9 @@ protected:
     virtual void handle_kthread_event(real_time_t rt, kthread_event event) override;
 
     virtual void handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) override;
+
+    virtual void handle_btransport_fw(id_t port, id_t thread, real_time_t rt, sysc_time_t st) override;
+    virtual void handle_btransport_bw(id_t port, id_t thread, real_time_t rt, sysc_time_t st) override;
 
 public:
     database_csv(const std::string& options);

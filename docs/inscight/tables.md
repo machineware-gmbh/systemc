@@ -41,13 +41,14 @@ the simulation. For each process, it holds the following fields:
 * `id` (`BIGINT`) globally unique identifier
 * `name` (`STRING`) full hierarchcal name for each process
 * `kind` (`INTEGER`) process kind (0: `SC_METHOD`, 1: `SC_THREAD`, 2: `SC_CTHREAD`)
+* `parent` (`BIGINT`) id of the parent module
 
 Example table:
-| id | name                | kind |
-|:--:|:-------------------:| :---:|
-| 49 | system.uart0.update | `0`  |
-| 70 | system.cpu0.run`    | `1`  |
-| 87 | system.cpu1.run`    | `1`  |
+| id | name                | kind | parent |
+|:--:|:-------------------:| :---:| :----: |
+| 49 | system.uart0.update | `0`  | 12     |
+| 70 | system.cpu0.run`    | `1`  | 40     |
+| 87 | system.cpu1.run`    | `1`  | 46     |
 
 ----
 ## Ports
@@ -55,13 +56,14 @@ The `ports` table holds information about all SystemC and TLM ports present in
 the simulation. For each port, the following fields are stored:
 * `id` (`BIGINT`) globally unique identifier
 * `name` (`STRING`) full hierarchcal name for each port
+* `parent` (`BIGINT`) id of the parent module
 
 Example table:
-| id | name                   |
-|:--:|:----------------------:|
-| 14 | system.uart0.clk_port0 |
-| 21 | system.cpu.out         |
-| 25 | system.cpu.hart0.data  |
+| id | name                   | parent |
+|:--:|:----------------------:| :----: |
+| 14 | system.uart0.clk_port0 | 12     |
+| 21 | system.cpu.out         | 50     |
+| 25 | system.cpu.hart0.data  | 58     |
 
 ----
 ## Events
@@ -340,3 +342,28 @@ Example table:
 |  6432431  |    20000  |  40343  |    14 |     1 |
 |  7148800  |    21000  |  40343  |    14 |     0 |
 |  7594222  |    56000  |  98550  |  1055 |     4 |
+
+----
+## Blocking Transport
+The `btransport` table holds information about blocking transport calls.
+* `port` (`BIGINT`) id of the port that is handling the transaction
+* `proc` (`BIGINT`) id of the currently active SC_THREAD
+* `rt` (`BIGINT`) real time stamp in nanoseconds when the transaction occured
+* `st` (`BIGINT`) simulation time stamp in nanoseconds when the transaction occured
+* `dir` (`BIGINT`) direction
+    - 0: on the way from the initiator to the target (fw)
+    - 1: on the way from the target back to the initiator (bw)
+
+Example table:
+| port            | proc     | rt        | st         | dir |
+| :-------------: | :------: | :-------: | :--------: | :-: |
+| 19635696        | 19569968 | 468828742 | 0          | 0   |
+| 140737488285856 | 19569968 | 468836315 | 0          | 0   |
+| 140737488285856 | 19569968 | 468855278 | 0          | 1   |
+| 19635696        | 19569968 | 468856189 | 0          | 1   |
+| 19635696        | 19569968 | 530868129 | 1400045000 | 0   |
+| 19670016        | 19569968 | 530883734 | 1400045000 | 0   |
+| 140737488017656 | 19569968 | 530885910 | 1400045000 | 0   |
+| 140737488017656 | 19569968 | 530921388 | 1449360000 | 1   |
+| 19670016        | 19569968 | 530922519 | 1449360000 | 1   |
+| 19635696        | 19569968 | 530923322 | 1449360000 | 1   |

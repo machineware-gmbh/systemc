@@ -50,12 +50,12 @@ void database_csv::module_created(id_t obj, const char* nm, const char* kind) {
     m_db_modules << obj << "," << escape(nm) << "," << escape(kind) << std::endl;
 }
 
-void database_csv::process_created(id_t obj, const char* nm, proc_kind kind) {
-    m_db_processes << obj << "," << escape(nm) << "," << proc_kind(kind) << std::endl;
+void database_csv::process_created(id_t obj, const char* nm, proc_kind kind, id_t parent) {
+    m_db_processes << obj << "," << escape(nm) << "," << proc_kind(kind) << "," << parent << std::endl;
 }
 
-void database_csv::port_created(id_t obj, const char* name) {
-    m_db_ports << obj << "," << escape(name) << std::endl;
+void database_csv::port_created(id_t obj, const char* name, id_t parent) {
+    m_db_ports << obj << "," << escape(name) << "," << parent << std::endl;
 }
 
 void database_csv::event_created(id_t obj, const char* name) {
@@ -146,6 +146,14 @@ void database_csv::handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, si
     m_db_irq << rt << "," << st << ",irq" << irqid << "," << irq_event_str(event) << std::endl;
 }
 
+void database_csv::handle_btransport_fw(id_t port, id_t thread, real_time_t rt, sysc_time_t st) {
+    m_db_btransport << port << "," << thread << "," << rt << "," << st << "," << 0 << std::endl;
+}
+
+void database_csv::handle_btransport_bw(id_t port, id_t thread, real_time_t rt, sysc_time_t st) {
+    m_db_btransport << port << "," << thread << "," << rt << "," << st << "," << 1 << std::endl;
+}
+
 static const char* dbname(const std::string& options, const char* nm) {
     static char name[256];
     memset(name, 0, sizeof(name));
@@ -172,7 +180,8 @@ database_csv::database_csv(const std::string& options):
     m_db_logmsg(dbname(options, "logmsg")),
     m_db_quantum(dbname(options, "quantum")),
     m_db_kthread(dbname(options, "kthread")),
-    m_db_irq(dbname(options, "irq")) {
+    m_db_irq(dbname(options, "irq")),
+    m_db_btransport(dbname(options, "btransport")) {
 }
 
 database_csv::~database_csv() {

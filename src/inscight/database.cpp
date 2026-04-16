@@ -163,12 +163,12 @@ void database::process(const entry& e) {
         break;
 
     case PROCESS_CREATED:
-        process_created(e.id, (const char*)e.arg0, (proc_kind)e.arg1);
+        process_created(e.id, (const char*)e.arg0, (proc_kind)e.arg1, (id_t)e.arg2);
         free((void*)e.arg0);
         break;
 
     case PORT_CREATED:
-        port_created(e.id, (const char*)e.arg0);
+        port_created(e.id, (const char*)e.arg0, (id_t)e.arg1);
         free((void*)e.arg0);
         break;
 
@@ -285,6 +285,16 @@ void database::process(const entry& e) {
     case IRQ_EVENT:
         if (m_enabled)
             handle_irq_event(e.id, (real_time_t)e.arg0, (sysc_time_t)e.arg1, e.arg2, (irq_event)e.arg3);
+        break;
+
+    case BTRANSPORT_FW:
+        if (m_enabled)
+            handle_btransport_fw(e.id, e.arg1, (real_time_t)e.arg2, (sysc_time_t)e.arg3);
+        break;
+
+    case BTRANSPORT_BW:
+        if (m_enabled)
+            handle_btransport_bw(e.id, e.arg1, (real_time_t)e.arg2, (sysc_time_t)e.arg3);
         break;
 
     default:

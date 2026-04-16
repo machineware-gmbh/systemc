@@ -448,7 +448,7 @@ sc_thread_process::sc_thread_process( const char* name_p, bool free_host,
         m_dont_init = false;
     }
 
-    INSCIGHT_PROCESS_CREATED(id(), name(), inscight::KIND_THREAD);
+    INSCIGHT_PROCESS_CREATED(id(), name(), inscight::KIND_THREAD, get_parent_object()->id());
 }
 
 //------------------------------------------------------------------------------

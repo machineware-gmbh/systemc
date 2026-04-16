@@ -246,7 +246,7 @@ sc_port_base::sc_port_base(
 {
     simcontext()->get_port_registry()->insert( this );
     m_bind_info = new sc_bind_info( max_size_, policy );
-    INSCIGHT_PORT_CREATED(id(), name());
+    INSCIGHT_PORT_CREATED(id(), name(), get_parent_object()->id());
 }
 
 sc_port_base::sc_port_base( 
@@ -257,7 +257,7 @@ sc_port_base::sc_port_base(
 {
     simcontext()->get_port_registry()->insert( this );
     m_bind_info = new sc_bind_info( max_size_, policy );
-    INSCIGHT_PORT_CREATED(id(), name());
+    INSCIGHT_PORT_CREATED(id(), name(), get_parent_object()->id());
 }
 
 

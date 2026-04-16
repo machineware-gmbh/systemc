@@ -61,8 +61,8 @@ protected:
     virtual void gen_meta(const meta_info& info) = 0;
 
     virtual void module_created(id_t obj, const char* name, const char* kind) = 0;
-    virtual void process_created(id_t obj, const char* name, proc_kind kind) = 0;
-    virtual void port_created(id_t obj, const char* name) = 0;
+    virtual void process_created(id_t obj, const char* name, proc_kind kind, id_t parent) = 0;
+    virtual void port_created(id_t obj, const char* name, id_t parent) = 0;
     virtual void event_created(id_t obj, const char* name) = 0;
     virtual void channel_created(id_t obj, const char* name, const char* kind) = 0;
 
@@ -97,6 +97,9 @@ protected:
     virtual void handle_kthread_event(real_time_t rt, kthread_event event) = 0;
 
     virtual void handle_irq_event(id_t obj, real_time_t rt, sysc_time_t st, size_t irqid, irq_event event) = 0;
+
+    virtual void handle_btransport_fw(id_t port, id_t thread, real_time_t rt, sysc_time_t st) = 0;
+    virtual void handle_btransport_bw(id_t port, id_t thread, real_time_t rt, sysc_time_t st) = 0;
 
 public:
     template <typename... ARGS>

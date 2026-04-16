@@ -34,12 +34,12 @@
 
 #define INSCIGHT_MODULE_CREATED(obj, name, kind) \
     INSCIGHT_TRACE(::inscight::MODULE_CREATED, obj, strdup(name), strdup(kind))
-#define INSCIGHT_PROCESS_CREATED(obj, name, kind) \
-    INSCIGHT_TRACE(::inscight::PROCESS_CREATED, obj, strdup(name), kind)
+#define INSCIGHT_PROCESS_CREATED(obj, name, kind, parent) \
+    INSCIGHT_TRACE(::inscight::PROCESS_CREATED, obj, strdup(name), kind, parent)
 #define INSCIGHT_EVENT_CREATED(obj, name) \
     INSCIGHT_TRACE(::inscight::EVENT_CREATED, obj, strdup(name))
-#define INSCIGHT_PORT_CREATED(obj, name) \
-    INSCIGHT_TRACE(::inscight::PORT_CREATED, obj, strdup(name))
+#define INSCIGHT_PORT_CREATED(obj, name, parent) \
+    INSCIGHT_TRACE(::inscight::PORT_CREATED, obj, strdup(name), parent)
 #define INSCIGHT_CHANNEL_CREATED(obj, name, kind)                  \
     INSCIGHT_TRACE(::inscight::CHANNEL_CREATED, obj, strdup(name), \
                    strdup(kind))
@@ -109,6 +109,19 @@
 #define INSCIGHT_TRANSACTION_TRACE_BW(obj, t, proto, txjson)     \
     INSCIGHT_TRACE(::inscight::TRANSACTION_TRACE_BW, (obj).id(), \
                    t, proto, strdup(txjson))
+
+#define INSCIGHT_BTRANSPORT_FW(port, payload)                    \
+    INSCIGHT_TRACE(::inscight::BTRANSPORT_FW, port,              \
+                   reinterpret_cast<::inscight::id_t>(&payload), \
+                   sc_core::sc_get_current_process_b()->id(),    \
+                   ::inscight::real_time_stamp(),                \
+                   ::inscight::sysc_time_stamp());
+#define INSCIGHT_BTRANSPORT_BW(port, payload)                    \
+    INSCIGHT_TRACE(::inscight::BTRANSPORT_BW, port,              \
+                   reinterpret_cast<::inscight::id_t>(&payload), \
+                   sc_core::sc_get_current_process_b()->id(),    \
+                   ::inscight::real_time_stamp(),                \
+                   ::inscight::sysc_time_stamp());
 
 #define INSCIGHT_LOG_MESSAGE(lvl, sender, msg)         \
     INSCIGHT_TRACE(::inscight::LOG_MESSAGE, 0,         \

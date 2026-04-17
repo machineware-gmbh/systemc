@@ -23,37 +23,19 @@
 
 namespace inscight {
 
-class fw_transport_if_b
-{
-public:
-    explicit fw_transport_if_b(id_t owner);
-    fw_transport_if_b() = delete;
-    fw_transport_if_b(const fw_transport_if_b&) = delete;
-    fw_transport_if_b& operator=(const fw_transport_if_b&) = delete;
-    virtual ~fw_transport_if_b();
-
-    static void remove(id_t owner);
-
-protected:
-    id_t owner;
-
-private:
-    static std::unordered_map<id_t, fw_transport_if_b*> ifs;
-};
-
 template <typename TYPES = tlm::tlm_base_protocol_types>
-class fw_transport_if : public fw_transport_if_b,
-                        public tlm::tlm_fw_transport_if<TYPES>
+class fw_transport_if : public tlm::tlm_fw_transport_if<TYPES>
 {
 public:
-    fw_transport_if(tlm::tlm_fw_transport_if<TYPES>& inner, id_t owner_id):
-        fw_transport_if_b(owner_id), m_inner(inner) {}
+    virtual ~fw_transport_if() {
+        all_ifs().erase(m_owner);
+    }
 
     void b_transport(typename TYPES::tlm_payload_type& trans,
                      sc_core::sc_time& t) override {
-        INSCIGHT_BTRANSPORT_FW(owner, trans);
+        INSCIGHT_BTRANSPORT_FW(m_owner, trans);
         m_inner.b_transport(trans, t);
-        INSCIGHT_BTRANSPORT_BW(owner, trans);
+        INSCIGHT_BTRANSPORT_BW(m_owner, trans);
     }
 
     tlm::tlm_sync_enum nb_transport_fw(typename TYPES::tlm_payload_type& trans,
@@ -71,8 +53,31 @@ public:
         return m_inner.transport_dbg(trans);
     }
 
+    static fw_transport_if<TYPES>* create(tlm::tlm_fw_transport_if<TYPES>& inner, id_t owner) {
+        auto*& wrapper = all_ifs()[owner];
+        if (wrapper == nullptr)
+            wrapper = new fw_transport_if<TYPES>(inner, owner);
+        return wrapper;
+    }
+
+    static void remove(id_t owner) {
+        auto& all = all_ifs();
+        auto it = all.find(owner);
+        if (it != all.end())
+            delete it->second;
+    }
+
 private:
     tlm::tlm_fw_transport_if<TYPES>& m_inner;
+    id_t m_owner;
+
+    fw_transport_if(tlm::tlm_fw_transport_if<TYPES>& inner, id_t owner):
+        m_inner(inner), m_owner(owner) {}
+
+    static std::unordered_map<id_t, fw_transport_if<TYPES>*>& all_ifs() {
+        static std::unordered_map<id_t, fw_transport_if<TYPES>*> all;
+        return all;
+    }
 };
 
 } // namespace inscight

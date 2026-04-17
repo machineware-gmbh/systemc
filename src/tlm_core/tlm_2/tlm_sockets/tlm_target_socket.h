@@ -251,12 +251,12 @@ public:
 #ifdef HAVE_INSCIGHT
   virtual ~tlm_target_socket()
   {
-    inscight::fw_transport_if_b::remove(get_base_port().id());
+    inscight::fw_transport_if<TYPES>::remove(get_base_port().id());
   }
 
   virtual void bind(typename base_socket_type::fw_interface_type& ifs) override
   {
-    auto* wrapper = new inscight::fw_transport_if<TYPES>(ifs, get_base_port().id());
+    auto* wrapper = inscight::fw_transport_if<TYPES>::create(ifs, get_base_port().id());
 
     base_socket_type::bind(*wrapper);
   }

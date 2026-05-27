@@ -20,7 +20,7 @@
 
 #if defined(__linux__)
 #include <unistd.h>
-#include<limits.h>
+#include <limits.h>
 #include <signal.h>
 
 static std::string progpath() {
@@ -103,7 +103,7 @@ static std::string username() {
 
 namespace inscight {
 
-static bool rt_trace_enabled = true;
+static volatile sig_atomic_t rt_trace_enabled = nullptr == getenv("INSCIGHT_RT_DISABLED");
 
 #ifdef __linux__
 static void handle_sigusr(int sig) {

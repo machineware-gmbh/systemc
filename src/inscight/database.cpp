@@ -103,7 +103,12 @@ static std::string username() {
 
 namespace inscight {
 
-static volatile sig_atomic_t rt_trace_enabled = nullptr == getenv("INSCIGHT_RT_DISABLED");
+#ifdef __linux__
+static volatile sig_atomic_t rt_trace_enabled =
+    getenv("INSCIGHT_RT_DISABLED") == nullptr ? 1 : 0;
+#else
+static bool rt_trace_enabled = getenv("INSCIGHT_RT_DISABLED") == nullptr;
+#endif
 
 #ifdef __linux__
 static void handle_sigusr(int sig) {

@@ -154,6 +154,7 @@ write_uint64(::std::ostream& os, uint64 val, int sign)
     return;
 fail:
     //os.set(::std::ios::badbit);
+    return;
 }
 
 ::std::ostream&

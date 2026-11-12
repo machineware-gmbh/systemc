@@ -40,6 +40,21 @@
 #include "sysc/kernel/sc_cor.h"
 #include "sysc/packages/qt/qt.h"
 
+// Sanitizers must be told about stack switches. Support for them is enabled
+// at compile time, i.e. when the library itself is built with Asan or Tsan;
+// regular builds do not pay for it.
+#if defined(__SANITIZE_ADDRESS__)
+#define SC_COR_QT_ASAN
+#elif defined(__SANITIZE_THREAD__)
+#define SC_COR_QT_TSAN
+#elif defined(__has_feature)
+#if __has_feature(address_sanitizer)
+#define SC_COR_QT_ASAN
+#elif __has_feature(thread_sanitizer)
+#define SC_COR_QT_TSAN
+#endif
+#endif
+
 namespace sc_core {
 
 class sc_cor_pkg_qt;
@@ -71,7 +86,13 @@ public:
     std::size_t    m_stack_size = 0U;      // stack size
     void*          m_stack = nullptr;      // stack
     qt_t*          m_sp = nullptr;         // stack pointer
-    void*          m_fake_stack = nullptr; // used by Asan
+
+#if defined(SC_COR_QT_ASAN)
+    void*          m_fake_stack = nullptr; // fake stack while switched out
+#elif defined(SC_COR_QT_TSAN)
+    void*          m_fiber = nullptr;      // fiber of this coroutine
+    bool           m_own_fiber = false;    // fiber was created by us
+#endif
 
     sc_cor_pkg_qt* m_pkg = nullptr;    // the creating coroutine package
 

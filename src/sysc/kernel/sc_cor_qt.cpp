@@ -44,27 +44,105 @@ namespace sc_core {
 
 // ----------------------------------------------------------------------------
 //  Sanitizer helpers
+//
+//  sc_cor_qt_start_switch   runs right before leaving old_cor, on its stack
+//  sc_cor_qt_finish_switch  runs right after entering new_cor, on its stack
+//  sc_cor_qt_cleanup        runs when a coroutine (not main) is destroyed
 // ----------------------------------------------------------------------------
 
-static void sanitizer_start_switch_fiber_weak( void** fake, void const* stack, size_t size)
-    __attribute__((__weakref__("__sanitizer_start_switch_fiber")));
-static void sanitizer_finish_switch_fiber_weak(void* fake, void const** old_stack, size_t* old_size)
-    __attribute__((__weakref__("__sanitizer_finish_switch_fiber")));
+} // namespace sc_core
 
-static inline void sc_cor_qt_start_stack_switch( sc_cor_qt* old_cor, sc_cor_qt* new_cor )
+#if defined(SC_COR_QT_ASAN)
+#include <sanitizer/common_interface_defs.h>
+#elif defined(SC_COR_QT_TSAN)
+#include <sanitizer/tsan_interface.h>
+#endif
+
+namespace sc_core {
+
+#if defined(SC_COR_QT_ASAN)
+
+// Asan must know which stack is in use and keeps a fake stack per coroutine
+
+static inline void sc_cor_qt_start_switch( sc_cor_qt* old_cor, sc_cor_qt* new_cor )
 {
-    if (sanitizer_start_switch_fiber_weak != nullptr) {
-        sanitizer_start_switch_fiber_weak(&old_cor->m_fake_stack, new_cor->m_stack, new_cor->m_stack_size);
+    __sanitizer_start_switch_fiber(&old_cor->m_fake_stack, new_cor->m_stack, new_cor->m_stack_size);
+}
+
+static inline void sc_cor_qt_finish_switch( sc_cor_qt* old_cor, sc_cor_qt* new_cor )
+{
+    // also reports the stack of old_cor, which is how we learn the stack of
+    // the main coroutine
+    auto** stack_bottom = const_cast<const void**>(&old_cor->m_stack);
+    __sanitizer_finish_switch_fiber(new_cor->m_fake_stack, stack_bottom, &old_cor->m_stack_size);
+}
+
+static inline void sc_cor_qt_cleanup( sc_cor_qt* cor )
+{
+    if (cor->m_fake_stack == nullptr) {
+        return;
+    }
+
+    // briefly switch to the fake stack of the coroutine to have it released
+    void* save_fake_stack;
+    const void* stack_bottom;
+    size_t stack_size;
+
+    __sanitizer_start_switch_fiber(&save_fake_stack, nullptr, 0U);
+    __sanitizer_finish_switch_fiber(cor->m_fake_stack, &stack_bottom, &stack_size);
+
+    __sanitizer_start_switch_fiber(nullptr, stack_bottom, stack_size);
+    __sanitizer_finish_switch_fiber(save_fake_stack, nullptr, nullptr);
+}
+
+#elif defined(SC_COR_QT_TSAN)
+
+// Tsan keeps a call stack per fiber; without a fiber per coroutine, the
+// frames of all coroutines pile up on the call stack of the thread
+
+static inline void sc_cor_qt_start_switch( sc_cor_qt* old_cor, sc_cor_qt* new_cor )
+{
+    // the main coroutine runs on the fiber of the thread that started it,
+    // all others get their fiber when they are first switched to
+    if (old_cor->m_fiber == nullptr) {
+        old_cor->m_fiber = __tsan_get_current_fiber();
+    }
+
+    if (new_cor->m_fiber == nullptr) {
+        new_cor->m_fiber = __tsan_create_fiber(0U);
+        new_cor->m_own_fiber = true;
+    }
+
+    // flags = 0 synchronizes both fibers: coroutines never run concurrently
+    __tsan_switch_to_fiber(new_cor->m_fiber, 0U);
+}
+
+static inline void sc_cor_qt_finish_switch( sc_cor_qt*, sc_cor_qt* )
+{
+}
+
+static inline void sc_cor_qt_cleanup( sc_cor_qt* cor )
+{
+    if (cor->m_own_fiber) {
+        __tsan_destroy_fiber(cor->m_fiber);
     }
 }
 
-static inline void sc_cor_qt_finish_stack_switch( sc_cor_qt* old_cor, sc_cor_qt* new_cor )
+#else // no sanitizer
+
+static inline void sc_cor_qt_start_switch( sc_cor_qt*, sc_cor_qt* )
 {
-    if (sanitizer_finish_switch_fiber_weak != nullptr) {
-        auto** stack_bottom = const_cast<const void**>(&old_cor->m_stack);
-        sanitizer_finish_switch_fiber_weak(new_cor->m_fake_stack, stack_bottom, &old_cor->m_stack_size);
-    }
 }
+
+static inline void sc_cor_qt_finish_switch( sc_cor_qt*, sc_cor_qt* )
+{
+}
+
+static inline void sc_cor_qt_cleanup( sc_cor_qt* )
+{
+}
+
+#endif
 
 // ----------------------------------------------------------------------------
 
@@ -94,17 +172,8 @@ sc_cor_qt::~sc_cor_qt()
     if ( m_stack ) {
         ::munmap( m_stack, m_stack_size );
     }
-    if (m_fake_stack) { // cleanup fake stack, when running under Asan
-        void* save_fake_stack;
-        const void* stack_bottom;
-        size_t stack_size;
 
-        sanitizer_start_switch_fiber_weak(&save_fake_stack, nullptr, 0U);
-        sanitizer_finish_switch_fiber_weak(m_fake_stack, &stack_bottom, &stack_size);
-
-        sanitizer_start_switch_fiber_weak(nullptr, stack_bottom, stack_size);
-        sanitizer_finish_switch_fiber_weak(save_fake_stack, nullptr, nullptr);
-    }
+    sc_cor_qt_cleanup( this );
 }
 
 // switch stack protection on/off
@@ -278,7 +347,7 @@ sc_cor_qt_yieldhelp( qt_t* sp, void* old_cor_p, void* new_cor_p )
     auto* new_cor = static_cast<sc_cor_qt*>( new_cor_p );
 
     old_cor->m_sp = sp;
-    sc_cor_qt_finish_stack_switch( old_cor, new_cor );
+    sc_cor_qt_finish_switch( old_cor, new_cor );
     return 0;
 }
 
@@ -288,7 +357,7 @@ sc_cor_pkg_qt::yield( sc_cor* next_cor )
     auto* new_cor = static_cast<sc_cor_qt*>( next_cor );
     auto* old_cor = set_current( new_cor );
 
-    sc_cor_qt_start_stack_switch( old_cor, new_cor );
+    sc_cor_qt_start_switch( old_cor, new_cor );
     QUICKTHREADS_BLOCK( sc_cor_qt_yieldhelp, old_cor, new_cor, new_cor->m_sp );
 }
 
@@ -302,7 +371,7 @@ sc_cor_qt_aborthelp( qt_t*, void* old_cor_p, void* new_cor_p )
     auto* old_cor = static_cast<sc_cor_qt*>( old_cor_p );
     auto* new_cor = static_cast<sc_cor_qt*>( new_cor_p );
 
-    sc_cor_qt_finish_stack_switch( old_cor, new_cor );
+    sc_cor_qt_finish_switch( old_cor, new_cor );
     return 0;
 }
 
@@ -312,7 +381,7 @@ sc_cor_pkg_qt::abort( sc_cor* next_cor )
     auto* new_cor = static_cast<sc_cor_qt*>( next_cor );
     auto* old_cor = set_current( new_cor );
 
-    sc_cor_qt_start_stack_switch( old_cor, new_cor );
+    sc_cor_qt_start_switch( old_cor, new_cor );
     QUICKTHREADS_ABORT( sc_cor_qt_aborthelp, old_cor, new_cor, new_cor->m_sp );
 }
 
